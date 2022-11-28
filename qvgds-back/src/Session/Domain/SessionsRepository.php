@@ -10,6 +10,6 @@ interface SessionsRepository
 {
     public function save(Session $session): Session;
 
-    public function get(SessionId $id): Session|null;
+    public function get(SessionId $id): ?Session;
 
 }
