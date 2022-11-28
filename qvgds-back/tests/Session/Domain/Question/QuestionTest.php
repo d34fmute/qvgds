@@ -1,10 +1,10 @@
 <?php
 
-namespace Session\Domain;
+namespace Session\Domain\Question;
 
 use PHPUnit\Framework\TestCase;
-use QVGDS\Session\Domain\Answer;
-use QVGDS\Session\Domain\Question;
+use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Tests\Session\SessionFixtures;
 use QVGDS\Utils\MissingMandatoryValueException;
 

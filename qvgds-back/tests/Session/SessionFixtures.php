@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace QVGDS\Tests\Session;
 
-use QVGDS\Session\Domain\Answer;
-use QVGDS\Session\Domain\BadAnswers;
-use QVGDS\Session\Domain\GoodAnswer;
-use QVGDS\Session\Domain\Question;
-use QVGDS\Session\Domain\QuestionId;
-use QVGDS\Session\Domain\QuestionToAdd;
+use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\BadAnswers;
+use QVGDS\Session\Domain\Question\GoodAnswer;
+use QVGDS\Session\Domain\Question\Question;
+use QVGDS\Session\Domain\Question\QuestionId;
+use QVGDS\Session\Domain\Question\QuestionToAdd;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Session\Domain\SessionId;
 use Ramsey\Uuid\Uuid;
