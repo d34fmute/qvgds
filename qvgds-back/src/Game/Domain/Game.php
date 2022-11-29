@@ -3,23 +3,22 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain;
 
-use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerType;
 use QVGDS\Session\Domain\Question\Answer;
-use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Session;
 
 final class Game
 {
-    public function __construct(private readonly Jokers $jokers, private readonly Session $session, private int $score = 0)
+
+    public function __construct(private readonly GameId $id, private readonly Jokers $jokers, private readonly Session $session, private int $score = 0)
     {
     }
 
-    public static function start(Session $session): self
+    public static function start(GameId $id, Session $session): self
     {
-        return new self(new Jokers(), $session);
+        return new self($id, new Jokers(), $session);
     }
 
     /**

@@ -33,7 +33,7 @@ final class Jokers
         return $this->available;
     }
 
-    public function use(JokerType $jokerType)
+    public function use(JokerType $jokerType): void
     {
         if (!in_array($jokerType, $this->available())) {
             throw new JokerNotAvailableException();
