@@ -21,7 +21,7 @@ final class JokersTest extends TestCase
 
         self::assertEquals([JokerType::FIFTY_FIFTY, JokerType::CALL_A_FRIEND], $jokers->available());
     }
-    
+
     /**
     * @test
     */
@@ -45,5 +45,4 @@ final class JokersTest extends TestCase
         $available = $jokers->available();
         self::assertEquals(JokerType::FIFTY_FIFTY, array_pop($available));
     }
-
 }

@@ -3,22 +3,26 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain;
 
-use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerType;
-use QVGDS\Session\Domain\Answer;
-use QVGDS\Session\Domain\Question;
-use QVGDS\Session\Domain\QuestionId;
+use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Session;
 
 final class Game
 {
-    public function __construct(private readonly Jokers $jokers, private readonly Session $session, private int $score = 0)
+
+    public function __construct(private readonly GameId $id, private readonly Jokers $jokers, private readonly Session $session, private int $score = 0)
     {
     }
 
+    public static function start(GameId $id, Session $session): self
+    {
+        return new self($id, new Jokers(), $session);
+    }
+
     /**
-     * @return Joker[]
+     * @return JokerType[]
      */
     public function jokers(): array
     {
@@ -34,13 +38,13 @@ final class Game
         return $isGuessed;
     }
 
-    public function score(): int
+    public function shitCoins(): ShitCoins
     {
-        return $this->score;
+        return ShitCoins::fromLevel($this->score);
     }
 
     /**
-     * @return Question[]
+     * @return Answer[]
      */
     public function fiftyFifty(QuestionId $id): array
     {

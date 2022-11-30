@@ -6,7 +6,7 @@ namespace QVGDS\Game\Domain\Joker;
 final class Jokers
 {
     /**
-     * @var Joker[]
+     * @var JokerType[]
      */
     private array $available;
 
@@ -25,12 +25,15 @@ final class Jokers
         $this->available = $this->computeAvailable();
     }
 
+    /**
+     * @return JokerType[]
+     */
     public function available(): array
     {
         return $this->available;
     }
 
-    public function use(JokerType $jokerType)
+    public function use(JokerType $jokerType): void
     {
         if (!in_array($jokerType, $this->available())) {
             throw new JokerNotAvailableException();
@@ -38,8 +41,14 @@ final class Jokers
         $this->available = array_filter($this->available, fn(JokerType $type): bool => $type != $jokerType);
     }
 
+    /**
+     * @return JokerType[]
+     */
     private function computeAvailable(): array
     {
-        return array_map(callback: fn(Joker $joker): JokerType => $joker->type(), array: array_filter($this->jokers, fn(Joker $joker): bool => $joker->canBeUsed()));
+        return array_map(
+            callback: fn(Joker $joker): JokerType => $joker->type(),
+            array:    array_filter($this->jokers, fn(Joker $joker): bool => $joker->canBeUsed())
+        );
     }
 }

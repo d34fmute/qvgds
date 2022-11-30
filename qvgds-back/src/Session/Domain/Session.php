@@ -3,7 +3,11 @@ declare(strict_types=1);
 
 namespace QVGDS\Session\Domain;
 
+use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\Question;
+use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
+use QVGDS\Session\Domain\Question\QuestionToAdd;
 use QVGDS\Utils\Assert;
 
 final class Session
@@ -26,10 +30,12 @@ final class Session
 
     public function add(QuestionToAdd $question): void
     {
-        $index = count($this->questions) +1;
-        $this->questions[] = new Question(new QuestionId($index), $question->text, $question->goodAnswer, $question->badAnswers);
+        $this->questions[] = new Question($this->calculateQuestionId(), $question->text, $question->goodAnswer, $question->badAnswers);
     }
 
+    /**
+     * @return Question[]
+     */
     public function questions(): array
     {
         return $this->questions;
@@ -37,13 +43,11 @@ final class Session
 
     public function guess(QuestionId $id, Answer $answer): bool
     {
-        $pop = $this->findQuestion($id);
-
-        return $pop->guess($answer);
+        return $this->findQuestion($id)->guess($answer);
     }
 
     /**
-     * @return Question[]
+     * @return Answer[]
      */
     public function fiftyFifty(QuestionId $id): array
     {
@@ -58,5 +62,11 @@ final class Session
         }
 
         return array_pop($questions);
+    }
+
+    private function calculateQuestionId(): QuestionId
+    {
+        $index = count($this->questions) + 1;
+        return new QuestionId($index);
     }
 }

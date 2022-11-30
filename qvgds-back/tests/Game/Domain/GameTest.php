@@ -2,10 +2,10 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use QVGDS\Game\Domain\Game;
-use QVGDS\Game\Domain\Joker\Jokers;
-use QVGDS\Session\Domain\Answer;
-use QVGDS\Session\Domain\QuestionId;
+use QVGDS\Game\Domain\ShitCoins;
+use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\QuestionId;
+use QVGDS\Tests\Game\GameFixtures;
 use QVGDS\Tests\Session\SessionFixtures;
 
 final class GameTest extends TestCase
@@ -15,7 +15,7 @@ final class GameTest extends TestCase
     */
     public function shouldListAvailableJokers(): void
     {
-        $game = new Game(new Jokers(), SessionFixtures::sessionWithQuestions());
+        $game = GameFixtures::newGame();
 
         $this->assertCount(2, $game->jokers());
     }
@@ -25,11 +25,11 @@ final class GameTest extends TestCase
     */
     public function shouldIncrementScoreWithAGoodAnswer(): void
     {
-        $game = new Game(new Jokers(), SessionFixtures::sessionWithQuestions());
+        $game = GameFixtures::newGame();
 
         $game->guess(SessionFixtures::questionId(), new Answer("Good answer"));
 
-        $this->assertEquals(1, $game->score());
+        $this->assertEquals(ShitCoins::of(100), $game->shitCoins());
     }
 
     /**
@@ -37,7 +37,7 @@ final class GameTest extends TestCase
     */
     public function shouldRevealTwoBadAnswersWithFiftyFifty(): void
     {
-        $game = new Game(new Jokers(), SessionFixtures::sessionWithQuestions());
+        $game = GameFixtures::newGame();
 
         $this->assertCount(2, $game->fiftyFifty(new QuestionId(1)));
 

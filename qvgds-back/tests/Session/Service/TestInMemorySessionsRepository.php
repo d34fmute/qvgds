@@ -27,8 +27,12 @@ final class TestInMemorySessionsRepository implements SessionsRepository
         return $session;
     }
 
-    public function get(SessionId $id): Session
+    public function get(SessionId $id): ?Session
     {
+        if (!array_key_exists($id->toString(), $this->sessions)){
+            return null;
+        }
+
         return $this->sessions[$id->toString()];
     }
 }

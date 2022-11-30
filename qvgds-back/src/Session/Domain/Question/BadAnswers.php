@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace QVGDS\Session\Domain;
+namespace QVGDS\Session\Domain\Question;
 
 final class BadAnswers
 {

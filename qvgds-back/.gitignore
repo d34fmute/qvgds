@@ -16,5 +16,5 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-.phpunit.result.cache
 composer.phar
+.idea/

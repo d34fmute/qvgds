@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Session\Domain;
 
 use PHPUnit\Framework\TestCase;
+use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
-use QVGDS\Session\Domain\QuestionId;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Tests\Session\SessionFixtures;
 use QVGDS\Utils\MissingMandatoryValueException;
