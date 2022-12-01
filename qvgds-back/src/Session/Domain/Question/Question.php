@@ -35,4 +35,9 @@ final class Question
     {
         return $this->id;
     }
+
+    public function text(): string
+    {
+        return $this->text;
+    }
 }

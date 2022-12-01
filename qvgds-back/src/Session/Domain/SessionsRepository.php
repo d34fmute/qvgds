@@ -12,4 +12,9 @@ interface SessionsRepository
 
     public function get(SessionId $id): ?Session;
 
+    /**
+     * @return Session[]
+     */
+    public function list(): array;
+
 }

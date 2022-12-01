@@ -11,4 +11,9 @@ final class Assert
             throw new MissingMandatoryValueException($field);
         }
     }
+
+    public static function numberValue(string $field, int $value): NumberAsserter
+    {
+        return new NumberAsserter($field, $value);
+    }
 }

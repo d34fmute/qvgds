@@ -65,4 +65,19 @@ final class SessionManagerTest extends TestCase
 
         self::assertEquals([SessionFixtures::question()], $session->questions());
     }
+
+    /**
+    * @test
+    */
+    public function shouldListSessions(): void
+    {
+        $sessions = new TestInMemorySessionsRepository();
+        $session = new Session(SessionId::newId(), "toto", SessionFixtures::question());
+        $sessions->save($session);
+        $sessions->save(SessionFixtures::sessionWithoutQuestions());
+
+        $service = new SessionsManager($sessions);
+
+        self::assertEquals([$session, SessionFixtures::sessionWithoutQuestions()], $service->list());
+    }
 }

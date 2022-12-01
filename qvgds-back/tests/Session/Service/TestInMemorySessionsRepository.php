@@ -35,4 +35,12 @@ final class TestInMemorySessionsRepository implements SessionsRepository
 
         return $this->sessions[$id->toString()];
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function list(): array
+    {
+        return array_values($this->sessions);
+    }
 }
