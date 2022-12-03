@@ -1,8 +1,10 @@
 {
-    "semi": true,
-    "trailingComma": "none",
-    "singleQuote": false,
-    "tabWidth": 2,
-    "useTabs": false,
-    "jsxBracketSameLine": true
+  "semi": true,
+  "trailingComma": "none",
+  "singleQuote": false,
+  "tabWidth": 2,
+  "useTabs": false,
+  "jsxBracketSameLine": true,
+  "pluginSearchDirs": ["./"],
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
