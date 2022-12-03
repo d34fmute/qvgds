@@ -28,7 +28,7 @@ final class Game
      */
     public function jokers(): array
     {
-        return $this->jokers->available();
+        return $this->jokers->availables();
     }
 
     public function guess(Answer $answer): bool
