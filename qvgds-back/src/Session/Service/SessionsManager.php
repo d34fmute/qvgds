@@ -41,4 +41,12 @@ final class SessionsManager
 
         return $session;
     }
+
+    /**
+     * @return Session[]
+     */
+    public function list(): array
+    {
+        return $this->sessions->list();
+    }
 }

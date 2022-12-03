@@ -20,6 +20,7 @@ final class Jokers
         $this->jokers = empty($jokers) ? [
             new FiftyFifty(JokerStatus::AVAILABLE),
             new CallAFriend(JokerStatus::AVAILABLE),
+            new AudienceHelp(JokerStatus::AVAILABLE)
         ]: $jokers;
 
         $this->available = $this->computeAvailable();
@@ -28,14 +29,14 @@ final class Jokers
     /**
      * @return JokerType[]
      */
-    public function available(): array
+    public function availables(): array
     {
         return $this->available;
     }
 
     public function use(JokerType $jokerType): void
     {
-        if (!in_array($jokerType, $this->available())) {
+        if (!in_array($jokerType, $this->availables())) {
             throw new JokerNotAvailableException();
         }
         $this->available = array_filter($this->available, fn(JokerType $type): bool => $type != $jokerType);

@@ -2,14 +2,28 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
+use QVGDS\Game\Domain\Game;
+use QVGDS\Game\Domain\GameId;
+use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Tests\Game\GameFixtures;
 use QVGDS\Tests\Session\SessionFixtures;
+use QVGDS\Utils\InvalidNumberArgumentException;
 
 final class GameTest extends TestCase
 {
+    /**
+    * @test
+    */
+    public function shouldNotBuildWithANegativeStep(): void
+    {
+        $this->expectException(InvalidNumberArgumentException::class);
+        $this->expectExceptionMessage("step must be equal or greater than 0");
+
+        new Game(GameId::newId(), new Jokers(), SessionFixtures::sessionWithQuestions(), -1 );
+    }
     /**
     * @test
     */
@@ -17,7 +31,7 @@ final class GameTest extends TestCase
     {
         $game = GameFixtures::newGame();
 
-        $this->assertCount(2, $game->jokers());
+        $this->assertCount(3, $game->jokers());
     }
 
     /**
@@ -27,7 +41,7 @@ final class GameTest extends TestCase
     {
         $game = GameFixtures::newGame();
 
-        $game->guess(SessionFixtures::questionId(), new Answer("Good answer"));
+        $game->guess(new Answer("Good answer"));
 
         $this->assertEquals(ShitCoins::of(100), $game->shitCoins());
     }
@@ -41,6 +55,6 @@ final class GameTest extends TestCase
 
         $this->assertCount(2, $game->fiftyFifty(new QuestionId(1)));
 
-        self::assertCount(1, $game->jokers());
+        self::assertCount(2, $game->jokers());
     }
 }

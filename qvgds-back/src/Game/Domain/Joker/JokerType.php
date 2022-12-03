@@ -7,4 +7,5 @@ enum JokerType
 {
     case FIFTY_FIFTY;
     case CALL_A_FRIEND;
+    case AUDIENCE_HELP;
 }

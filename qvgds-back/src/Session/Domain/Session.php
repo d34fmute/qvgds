@@ -69,4 +69,9 @@ final class Session
         $index = count($this->questions) + 1;
         return new QuestionId($index);
     }
+
+    public function question(QuestionId $id): string
+    {
+        return $this->findQuestion($id)->text();
+    }
 }
