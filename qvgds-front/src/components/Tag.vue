@@ -10,5 +10,7 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <span class="rounded-xl bg-primary p-4 font-bold">{{ props.label }}</span>
+  <span :class="[props.class, 'rounded-xl bg-primary p-4 font-bold']">{{
+    props.label
+  }}</span>
 </template>
