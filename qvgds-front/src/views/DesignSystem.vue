@@ -5,6 +5,8 @@ import JokerButton from "@/components/JokerButton.vue";
 import Tag from "@/components/Tag.vue";
 import WebcamFrame from "@/components/WebcamFrame.vue";
 import Input from "@/components/Input.vue";
+import Frame from "@/components/Frame.vue";
+import LevelsMenu from "@/components/LevelsMenu.vue";
 </script>
 
 <template>
@@ -38,6 +40,12 @@ import Input from "@/components/Input.vue";
       </div>
 
       <div><Input placeholder="ex: silvere ze dev" /></div>
+      <div>
+        <Frame class="flex items-center justify-center p-10"> hello </Frame>
+      </div>
+      <div>
+        <LevelsMenu :currentLevel="5" />
+      </div>
     </section>
   </main>
 </template>
