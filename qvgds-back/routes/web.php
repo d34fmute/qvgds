@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SessionsController;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
@@ -14,4 +16,5 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/api/games', fn() => new JsonResponse([]));
+Route::get('/', [DashboardController::class, 'index']);
+Route::resource('sessions', SessionsController::class);

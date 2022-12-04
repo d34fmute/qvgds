@@ -28,6 +28,11 @@ final class Session
         return $this->id;
     }
 
+    public function name(): String
+    {
+        return $this->name;
+    }
+
     public function add(QuestionToAdd $question): void
     {
         $this->questions[] = new Question($this->calculateQuestionId(), $question->text, $question->goodAnswer, $question->badAnswers);
