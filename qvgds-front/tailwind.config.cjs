@@ -4,6 +4,13 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      borderRadius: {
+        "2.5xl": "18px",
+        inherit: "inherit"
+      },
+      boxShadow: {
+        frame: "0px 0px 80px #0F042E"
+      },
       colors: {
         success: {
           DEFAULT: "#12C903",
