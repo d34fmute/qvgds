@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\GameId;
+use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Game\Service\GamesService;
@@ -89,7 +90,7 @@ final class GamesServiceTest extends TestCase
 
         $game = $this->service->get(GameFixtures::gameId());
 
-        self::assertEquals(ShitCoins::fromLevel(1), $game->shitCoins());
+        self::assertEquals(ShitCoins::fromLevel(1, GameStatus::IN_PROGRESS), $game->shitCoins());
     }
 
     private function prepareGame(): void

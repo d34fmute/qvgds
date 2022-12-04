@@ -3,6 +3,7 @@
 namespace Game\Domain;
 
 use PHPUnit\Framework\TestCase;
+use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\InvalidShitCoinsException;
 use QVGDS\Game\Domain\ShitCoins;
 
@@ -15,7 +16,7 @@ class ShitCoinsTest extends TestCase
      */
     public function shouldBuildFromGrid(int $level, ShitCoins $shitCoins)
     {
-        self::assertEquals($shitCoins, ShitCoins::fromLevel($level));
+        self::assertEquals($shitCoins, ShitCoins::fromLevel($level, GameStatus::IN_PROGRESS));
     }
 
     /**
@@ -35,8 +36,37 @@ class ShitCoinsTest extends TestCase
     {
         $this->expectException(InvalidShitCoinsException::class);
         $this->expectExceptionMessage("Invalid level: -2");
-        ShitCoins::fromLevel(-2);
+        ShitCoins::fromLevel(-2, GameStatus::IN_PROGRESS);
+    }
 
+    /**
+    * @test
+    */
+    public function shouldGetShitcoinsForFirstThresholdForLostStatus(): void
+    {
+        $shitCoins = ShitCoins::fromLevel(6, GameStatus::LOST);
+
+        self::assertEquals(ShitCoins::of(1000), $shitCoins);
+    }
+
+    /**
+    * @test
+    */
+    public function shouldGetShitcoinsForSecondThresholdForLostStatus(): void
+    {
+        $shitCoins = ShitCoins::fromLevel(11, GameStatus::LOST);
+
+        self::assertEquals(ShitCoins::of(24000), $shitCoins);
+    }
+
+    /**
+    * @test
+    */
+    public function shouldGetShitcoinsWhenBelowFirstThresholdForLostStatus(): void
+    {
+        $shitCoins = ShitCoins::fromLevel(2, GameStatus::LOST);
+
+        self::assertEquals(ShitCoins::of(200), $shitCoins);
     }
 
     public function pyramid(): array

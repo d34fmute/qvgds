@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\Game;
+use QVGDS\Game\Domain\GameBlockedException;
 use QVGDS\Game\Domain\GameId;
+use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Session\Domain\Question\Answer;
@@ -22,7 +24,7 @@ final class GameTest extends TestCase
         $this->expectException(InvalidNumberArgumentException::class);
         $this->expectExceptionMessage("step must be equal or greater than 0");
 
-        new Game(GameId::newId(), new Jokers(), SessionFixtures::sessionWithQuestions(), -1 );
+        new Game(GameId::newId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::IN_PROGRESS, -1);
     }
     /**
     * @test
@@ -56,5 +58,51 @@ final class GameTest extends TestCase
         $this->assertCount(2, $game->fiftyFifty(new QuestionId(1)));
 
         self::assertCount(2, $game->jokers());
+    }
+
+    /**
+    * @test
+    */
+    public function shouldForgiveAGame(): void
+    {
+        $game = GameFixtures::newGame();
+
+        $game->forgive();
+
+        self::assertEquals(GameStatus::FORGIVEN, $game->status());
+    }
+
+    /**
+    * @test
+    */
+    public function shouldLooseWithABadAnswer(): void
+    {
+        $game = GameFixtures::newGame();
+
+        $game->guess(new Answer("You loose"));
+
+        self::assertEquals(GameStatus::LOST, $game->status());
+    }
+
+    /**
+    * @test
+    */
+    public function shouldFailWhenGuessingOnLostGame(): void
+    {
+        $lostGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, 4);
+        $this->expectException(GameBlockedException::class);
+        $this->expectExceptionMessage("Game LOST");
+        $lostGame->guess(new Answer("don’t care"));
+    }
+
+    /**
+    * @test
+    */
+    public function shouldFailWhenGuessingOnForgivenGame(): void
+    {
+        $forgivenGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN, 4);
+        $this->expectException(GameBlockedException::class);
+        $this->expectExceptionMessage("Game FORGIVEN");
+        $forgivenGame->guess(new Answer("don’t care"));
     }
 }

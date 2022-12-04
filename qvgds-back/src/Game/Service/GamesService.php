@@ -8,7 +8,6 @@ use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GamesRepository;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Session\Domain\Question\Answer;
-use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\SessionId;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Session\Domain\SessionsRepository;
@@ -19,14 +18,14 @@ final class GamesService
     {
     }
 
-    public function start(GameId $id, SessionId $sessionId): Game
+    public function start(GameId $id, SessionId $sessionId, string $player): Game
     {
         $session = $this->sessions->get($sessionId);
         if ($session === null) {
             throw new SessionNotFoundException();
         }
 
-        $game = Game::start($id, $session);
+        $game = Game::start($id, $player, $session);
 
         $this->games->save($game);
 

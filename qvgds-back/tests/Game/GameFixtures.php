@@ -12,7 +12,7 @@ final class GameFixtures
 {
     public static function newGame(): Game
     {
-        return Game::start(self::gameId(), SessionFixtures::sessionWithQuestions());
+        return Game::start(self::gameId(), self::player(), SessionFixtures::sessionWithQuestions());
     }
 
     public static function gameId(): GameId
@@ -20,5 +20,8 @@ final class GameFixtures
         return new GameId(Uuid::fromString("7cb03186-5430-45c2-9bdb-d5993a4ad209"));
     }
 
-
+    public static function player(): string
+    {
+        return "Toto";
+    }
 }

@@ -6,6 +6,9 @@ namespace QVGDS\Game\Domain;
 final class ShitCoins
 {
 
+    private const SECOND_THRESHOLD = 10;
+    private const FIRST_THRESHOLD = 5;
+
     private function __construct(private readonly int $amount)
     {
     }
@@ -37,12 +40,12 @@ final class ShitCoins
             2 => 200,
             3 => 300,
             4 => 500,
-            5 => 1000,
+            self::FIRST_THRESHOLD => 1000,
             6 => 2000,
             7 => 4000,
             8 => 8000,
             9 => 12000,
-            10 => 24000,
+            self::SECOND_THRESHOLD => 24000,
             11 => 36000,
             12 => 72000,
             13 => 150000,
@@ -51,12 +54,13 @@ final class ShitCoins
         ];
     }
 
-    /**
-     * @throws InvalidShitCoinsException
-     */
-    public static function fromLevel(int $level): self
+
+    public static function fromLevel(int $level, GameStatus $status): self
     {
         self::assertLevel($level);
+        if ($status === GameStatus::LOST) {
+            return self::shitCoinsWithThreshold($level);
+        }
 
         return self::converter($level);
     }
@@ -71,5 +75,14 @@ final class ShitCoins
     private static function converter(int $level): self
     {
         return new self(self::pyramid()[$level]);
+    }
+
+    private static function shitCoinsWithThreshold(int $level): ShitCoins
+    {
+        return match (true) {
+            $level >= self::SECOND_THRESHOLD => self::converter(self::SECOND_THRESHOLD),
+            $level >= self::FIRST_THRESHOLD => self::converter(self::FIRST_THRESHOLD),
+            default => self::converter($level)
+        };
     }
 }
