@@ -18,4 +18,9 @@ final class CallAFriend implements Joker
     {
         return JokerType::CALL_A_FRIEND;
     }
+
+    public function status(): JokerStatus
+    {
+        return $this->status;
+    }
 }

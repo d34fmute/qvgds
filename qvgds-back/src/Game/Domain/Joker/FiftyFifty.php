@@ -18,4 +18,9 @@ final class FiftyFifty implements Joker
     {
         return $this->status === JokerStatus::AVAILABLE;
     }
+
+    public function status(): JokerStatus
+    {
+        return $this->status;
+    }
 }

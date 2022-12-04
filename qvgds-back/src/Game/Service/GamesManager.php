@@ -12,7 +12,7 @@ use QVGDS\Session\Domain\SessionId;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Session\Domain\SessionsRepository;
 
-final class GamesService
+final class GamesManager
 {
     public function __construct(private readonly GamesRepository $games, private readonly SessionsRepository $sessions)
     {

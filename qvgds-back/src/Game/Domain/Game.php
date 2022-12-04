@@ -6,7 +6,6 @@ namespace QVGDS\Game\Domain;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerType;
 use QVGDS\Session\Domain\Question\Answer;
-use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Utils\Assert;
 
@@ -14,12 +13,14 @@ final class Game
 {
     public function __construct(
         private readonly GameId  $id,
-        private readonly string $player,
+        private readonly string  $player,
         private readonly Jokers  $jokers,
         private readonly Session $session,
         private GameStatus       $status,
         private int              $step = 1
-    ) {
+    )
+    {
+        Assert::notEmptyText("step", $player);
         Assert::numberValue("step", $step)->isEqualOrGreaterThan(0);
     }
 
@@ -31,15 +32,20 @@ final class Game
     /**
      * @return JokerType[]
      */
-    public function jokers(): array
+    public function availableJokers(): array
     {
         return $this->jokers->availables();
+    }
+
+    public function jokers(): Jokers
+    {
+        return $this->jokers;
     }
 
     public function guess(Answer $answer): bool
     {
         $this->assertGameStatus();
-        $isGuessed = $this->session->guess(new QuestionId($this->step), $answer);
+        $isGuessed = $this->session->guess(1, $answer);
         if ($isGuessed) {
             $this->step += 1;
         } else {
@@ -57,11 +63,11 @@ final class Game
     /**
      * @return Answer[]
      */
-    public function fiftyFifty(QuestionId $id): array
+    public function fiftyFifty(int $step): array
     {
         $this->jokers->use(JokerType::FIFTY_FIFTY);
 
-        return $this->session->fiftyFifty($id);
+        return $this->session->fiftyFifty($step);
     }
 
     public function id(): GameId
@@ -71,7 +77,7 @@ final class Game
 
     public function currentQuestion(): string
     {
-        return $this->session->question(new QuestionId($this->step));
+        return $this->session->question($this->step);
     }
 
     public function status(): GameStatus
@@ -89,5 +95,20 @@ final class Game
         if ($this->status === GameStatus::LOST || $this->status === GameStatus::FORGIVEN) {
             throw new GameBlockedException($this->status->name);
         }
+    }
+
+    public function player(): string
+    {
+        return $this->player;
+    }
+
+    public function session(): Session
+    {
+        return $this->session;
+    }
+
+    public function step(): int
+    {
+        return $this->step;
     }
 }

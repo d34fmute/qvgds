@@ -18,4 +18,9 @@ final class AudienceHelp implements Joker
     {
         return JokerType::AUDIENCE_HELP;
     }
+
+    public function status(): JokerStatus
+    {
+        return $this->status;
+    }
 }

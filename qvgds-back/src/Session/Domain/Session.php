@@ -5,7 +5,6 @@ namespace QVGDS\Session\Domain;
 
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\Question;
-use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
 use QVGDS\Session\Domain\Question\QuestionToAdd;
 use QVGDS\Utils\Assert;
@@ -35,7 +34,7 @@ final class Session
 
     public function add(QuestionToAdd $question): void
     {
-        $this->questions[] = new Question($this->calculateQuestionId(), $question->text, $question->goodAnswer, $question->badAnswers);
+        $this->questions[] = new Question($question->id, $this->calculateStep(), $question->text, $question->goodAnswer, $question->badAnswers);
     }
 
     /**
@@ -46,7 +45,7 @@ final class Session
         return $this->questions;
     }
 
-    public function guess(QuestionId $id, Answer $answer): bool
+    public function guess(int $id, Answer $answer): bool
     {
         return $this->findQuestion($id)->guess($answer);
     }
@@ -54,28 +53,27 @@ final class Session
     /**
      * @return Answer[]
      */
-    public function fiftyFifty(QuestionId $id): array
+    public function fiftyFifty(int $id): array
     {
         return $this->findQuestion($id)->fiftyFifty();
     }
 
-    private function findQuestion(QuestionId $id): Question
+    private function findQuestion(int $id): Question
     {
-        $questions = array_filter($this->questions, fn(Question $q): bool => $q->id() == $id);
+        $questions = array_filter($this->questions, fn(Question $q): bool => $q->step() == $id);
         if (empty($questions)) {
-            throw new QuestionNotFoundException((string) $id->id);
+            throw new QuestionNotFoundException((string) $id);
         }
 
         return array_pop($questions);
     }
 
-    private function calculateQuestionId(): QuestionId
+    private function calculateStep(): int
     {
-        $index = count($this->questions) + 1;
-        return new QuestionId($index);
+        return count($this->questions) + 1;
     }
 
-    public function question(QuestionId $id): string
+    public function question(int $id): string
     {
         return $this->findQuestion($id)->text();
     }

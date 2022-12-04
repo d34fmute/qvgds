@@ -3,9 +3,6 @@ declare(strict_types=1);
 
 namespace QVGDS\Session\Domain;
 
-use QVGDS\Session\Domain\Session;
-use QVGDS\Session\Domain\SessionId;
-
 interface SessionsRepository
 {
     public function save(Session $session): Session;
@@ -16,5 +13,4 @@ interface SessionsRepository
      * @return Session[]
      */
     public function list(): array;
-
 }

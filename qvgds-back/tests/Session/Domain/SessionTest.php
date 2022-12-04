@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Session\Domain;
 
 use PHPUnit\Framework\TestCase;
-use QVGDS\Session\Domain\Question\QuestionId;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Tests\Session\SessionFixtures;
@@ -47,6 +46,6 @@ class SessionTest extends TestCase
         $this->expectException(QuestionNotFoundException::class);
         $this->expectExceptionMessage("Question 3 not found in this session");
 
-        $session->fiftyFifty(new QuestionId(3));
+        $session->fiftyFifty(3);
     }
 }

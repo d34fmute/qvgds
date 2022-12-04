@@ -7,7 +7,7 @@ use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Domain\UnknownGameException;
-use QVGDS\Game\Service\GamesService;
+use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Tests\Game\GameFixtures;
@@ -15,18 +15,16 @@ use QVGDS\Tests\Game\Service\TestInMemoryGamesRepository;
 use QVGDS\Tests\Session\Service\TestInMemorySessionsRepository;
 use QVGDS\Tests\Session\SessionFixtures;
 
-final class GamesServiceTest extends TestCase
+final class GamesManagerTest extends TestCase
 {
 
-    private TestInMemoryGamesRepository $games;
     private TestInMemorySessionsRepository $sessions;
-    private GamesService $service;
+    private GamesManager $service;
 
     protected function setUp(): void
     {
-        $this->games = new TestInMemoryGamesRepository();
         $this->sessions = new TestInMemorySessionsRepository();
-        $this->service = new GamesService($this->games, $this->sessions);
+        $this->service = new GamesManager(new TestInMemoryGamesRepository(), $this->sessions);
     }
 
     /**
@@ -35,7 +33,7 @@ final class GamesServiceTest extends TestCase
     public function shouldNotStartAGameWithUnknownSession(): void
     {
         $this->expectException(SessionNotFoundException::class);
-        $this->service->start(GameId::newId(), SessionFixtures::sessionId());
+        $this->service->start(GameId::newId(), SessionFixtures::sessionId(), "Toto");
     }
 
     /**
@@ -96,6 +94,6 @@ final class GamesServiceTest extends TestCase
     private function prepareGame(): void
     {
         $this->sessions->save(SessionFixtures::sessionWithQuestions());
-        $this->service->start(GameFixtures::gameId(), SessionFixtures::sessionId());
+        $this->service->start(GameFixtures::gameId(), SessionFixtures::sessionId(), "Toto");
     }
 }

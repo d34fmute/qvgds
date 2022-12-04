@@ -17,4 +17,9 @@ final class GameId
         return new self(Uuid::uuid4());
     }
 
+    public function get(): string
+    {
+        return $this->id->toString();
+    }
+
 }

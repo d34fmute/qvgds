@@ -22,18 +22,18 @@ final class TestInMemorySessionsRepository implements SessionsRepository
 
     public function save(Session $session): Session
     {
-        $this->sessions[$session->id()->toString()] = $session;
+        $this->sessions[$session->id()->get()] = $session;
 
         return $session;
     }
 
     public function get(SessionId $id): ?Session
     {
-        if (!array_key_exists($id->toString(), $this->sessions)){
+        if (!array_key_exists($id->get(), $this->sessions)){
             return null;
         }
 
-        return $this->sessions[$id->toString()];
+        return $this->sessions[$id->get()];
     }
 
     /**

@@ -52,4 +52,12 @@ final class Jokers
             array:    array_filter($this->jokers, fn(Joker $joker): bool => $joker->canBeUsed())
         );
     }
+
+    /**
+     * @return Joker[]
+     */
+    public function all(): array
+    {
+        return $this->jokers;
+    }
 }

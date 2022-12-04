@@ -1,6 +1,7 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\GamesController;
+use App\Http\Controllers\SessionsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post("/sessions", [SessionsController::class, "create"]);
+Route::post("/sessions/{id}/questions", [SessionsController::class, "addQuestion"]);
+Route::get("/sessions", [SessionsController::class, "list"]);
+Route::get("/sessions/{id}", [SessionsController::class, "show"]);
+
+Route::post("/games", [GamesController::class, "start"]);
+Route::get("/games", [GamesController::class, "list"]);
+Route::get("/games/{id}/current-question", [GamesController::class, "currentQuestion"]);
+Route::get("/games/{id}/jokers", [GamesController::class, "jokers"]);
+Route::post("/games/{id}/fifty-fifty", [GamesController::class, "fiftyFifty"]);

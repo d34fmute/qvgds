@@ -17,7 +17,12 @@ final class SessionId
         return new SessionId(Uuid::uuid4());
     }
 
-    public function toString(): string
+    public static function from(string $session): self
+    {
+        return new self(Uuid::fromString($session));
+    }
+
+    public function get(): string
     {
         return $this->id->toString();
     }

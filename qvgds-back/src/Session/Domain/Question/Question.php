@@ -10,12 +10,14 @@ final class Question
 
     public function __construct(
         private readonly QuestionId $id,
+        private readonly int $step,
         private readonly string $text,
         private readonly GoodAnswer $goodAnswer,
         private readonly BadAnswers $badAnswers,
     )
     {
         Assert::notEmptyText("text", $text);
+        Assert::numberValue("step", $step)->isEqualOrGreaterThan(1);
     }
 
     /**
@@ -39,5 +41,23 @@ final class Question
     public function text(): string
     {
         return $this->text;
+    }
+
+    public function goodAnswer(): string
+    {
+        return $this->goodAnswer->get();
+    }
+
+    /**
+     * @return Answer[]
+     */
+    public function badAnswers(): array
+    {
+        return $this->badAnswers->get();
+    }
+
+    public function step(): int
+    {
+        return $this->step;
     }
 }
