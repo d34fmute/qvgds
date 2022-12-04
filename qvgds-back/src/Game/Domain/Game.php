@@ -12,9 +12,9 @@ use QVGDS\Utils\Assert;
 
 final class Game
 {
-
     public function __construct(
         private readonly GameId  $id,
+        private readonly string $player,
         private readonly Jokers  $jokers,
         private readonly Session $session,
         private GameStatus       $status,
@@ -23,9 +23,9 @@ final class Game
         Assert::numberValue("step", $step)->isEqualOrGreaterThan(0);
     }
 
-    public static function start(GameId $id, Session $session): self
+    public static function start(GameId $id, string $player, Session $session): self
     {
-        return new self($id, new Jokers(), $session, GameStatus::IN_PROGRESS);
+        return new self($id, $player, new Jokers(), $session, GameStatus::IN_PROGRESS);
     }
 
     /**

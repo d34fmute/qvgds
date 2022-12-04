@@ -18,14 +18,14 @@ final class GamesService
     {
     }
 
-    public function start(GameId $id, SessionId $sessionId): Game
+    public function start(GameId $id, SessionId $sessionId, string $player): Game
     {
         $session = $this->sessions->get($sessionId);
         if ($session === null) {
             throw new SessionNotFoundException();
         }
 
-        $game = Game::start($id, $session);
+        $game = Game::start($id, $player, $session);
 
         $this->games->save($game);
 

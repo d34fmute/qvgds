@@ -24,7 +24,7 @@ final class GameTest extends TestCase
         $this->expectException(InvalidNumberArgumentException::class);
         $this->expectExceptionMessage("step must be equal or greater than 0");
 
-        new Game(GameId::newId(), new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::IN_PROGRESS, -1 );
+        new Game(GameId::newId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::IN_PROGRESS, -1);
     }
     /**
     * @test
@@ -89,7 +89,7 @@ final class GameTest extends TestCase
     */
     public function shouldFailWhenGuessingOnLostGame(): void
     {
-        $lostGame = new Game(GameFixtures::gameId(), new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, 4);
+        $lostGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, 4);
         $this->expectException(GameBlockedException::class);
         $this->expectExceptionMessage("Game LOST");
         $lostGame->guess(new Answer("don’t care"));
@@ -100,7 +100,7 @@ final class GameTest extends TestCase
     */
     public function shouldFailWhenGuessingOnForgivenGame(): void
     {
-        $forgivenGame = new Game(GameFixtures::gameId(), new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN,4);
+        $forgivenGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN, 4);
         $this->expectException(GameBlockedException::class);
         $this->expectExceptionMessage("Game FORGIVEN");
         $forgivenGame->guess(new Answer("don’t care"));
