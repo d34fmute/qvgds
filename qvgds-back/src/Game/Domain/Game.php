@@ -13,14 +13,19 @@ use QVGDS\Utils\Assert;
 final class Game
 {
 
-    public function __construct(private readonly GameId $id, private readonly Jokers $jokers, private readonly Session $session, private int $step = 1)
-    {
+    public function __construct(
+        private readonly GameId  $id,
+        private readonly Jokers  $jokers,
+        private readonly Session $session,
+        private GameStatus       $status,
+        private int              $step = 1
+    ) {
         Assert::numberValue("step", $step)->isEqualOrGreaterThan(0);
     }
 
     public static function start(GameId $id, Session $session): self
     {
-        return new self($id, new Jokers(), $session);
+        return new self($id, new Jokers(), $session, GameStatus::IN_PROGRESS);
     }
 
     /**
@@ -33,16 +38,20 @@ final class Game
 
     public function guess(Answer $answer): bool
     {
+        $this->assertGameStatus();
         $isGuessed = $this->session->guess(new QuestionId($this->step), $answer);
         if ($isGuessed) {
             $this->step += 1;
+        } else {
+            $this->status = GameStatus::LOST;
         }
+
         return $isGuessed;
     }
 
     public function shitCoins(): ShitCoins
     {
-        return ShitCoins::fromLevel($this->step - 1);
+        return ShitCoins::fromLevel($this->step - 1, $this->status);
     }
 
     /**
@@ -63,5 +72,22 @@ final class Game
     public function currentQuestion(): string
     {
         return $this->session->question(new QuestionId($this->step));
+    }
+
+    public function status(): GameStatus
+    {
+        return $this->status;
+    }
+
+    public function forgive(): void
+    {
+        $this->status = GameStatus::FORGIVEN;
+    }
+
+    private function assertGameStatus(): void
+    {
+        if ($this->status === GameStatus::LOST || $this->status === GameStatus::FORGIVEN) {
+            throw new GameBlockedException($this->status->name);
+        }
     }
 }

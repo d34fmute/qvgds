@@ -8,7 +8,6 @@ use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GamesRepository;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Session\Domain\Question\Answer;
-use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\SessionId;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Session\Domain\SessionsRepository;
