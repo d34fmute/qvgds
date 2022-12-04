@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import DesignSystemView from "../views/DesignSystem.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,9 +7,9 @@ const router = createRouter({
     {
       path: "/",
       name: "home",
-      component: HomeView,
-    },
-  ],
+      component: DesignSystemView
+    }
+  ]
 });
 
 export default router;
