@@ -4,6 +4,7 @@ import ChoiceButton from "@/components/ChoiceButton.vue";
 import JokerButton from "@/components/JokerButton.vue";
 import Tag from "@/components/Tag.vue";
 import WebcamFrame from "@/components/WebcamFrame.vue";
+import Input from "@/components/Input.vue";
 </script>
 
 <template>
@@ -35,6 +36,8 @@ import WebcamFrame from "@/components/WebcamFrame.vue";
         <Tag label="JEAN-PIERRE DEAF'" />
         <WebcamFrame />
       </div>
+
+      <div><Input placeholder="ex: silvere ze dev" /></div>
     </section>
   </main>
 </template>
