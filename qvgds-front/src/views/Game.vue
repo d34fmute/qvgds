@@ -4,7 +4,7 @@ import type { DropdownOption } from "@/components/Dropdown.vue";
 import LevelsMenu from "@/components/LevelsMenu.vue";
 import WebcamFrame from "@/components/WebcamFrame.vue";
 import Tag from "@/components/Tag.vue";
-import JokerButton from "@/components/JokerButton.vue";
+import JokerButton, { type JokerState } from "@/components/JokerButton.vue";
 import ChoiceButton, {
   type ButtonVariant
 } from "@/components/ChoiceButton.vue";
@@ -21,16 +21,39 @@ const sceneTwoCams = ref(true);
 
 const level = ref(1);
 
-interface Button {
+interface Choice {
   label: string;
   variant?: ButtonVariant;
 }
-const buttons = reactive<{ a: Button; b: Button; c: Button; d: Button }>({
+const choices = reactive<{ a: Choice; b: Choice; c: Choice; d: Choice }>({
   a: { label: "1994" },
   b: { label: "1994", variant: "selected" },
   c: { label: "1994", variant: "valid" },
   d: { label: "1994", variant: "invalid" }
 });
+
+interface Joker {
+  state: JokerState;
+}
+const jokers = reactive<{ fifty: Joker; chat: Joker; friend: Joker }>({
+  fifty: { state: "used" },
+  chat: { state: "default" },
+  friend: { state: "default" }
+});
+
+const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
+  const currentJoker = jokers[joker];
+  const state = currentJoker.state;
+  if (state === "active") {
+    currentJoker.state = "used";
+  }
+  if (state === "used") {
+    currentJoker.state = "default";
+  }
+  if (state === "default") {
+    currentJoker.state = "active";
+  }
+};
 </script>
 
 <template>
@@ -60,15 +83,30 @@ const buttons = reactive<{ a: Button; b: Button; c: Button; d: Button }>({
         </p>
         <Frame class="w-72 rounded-l-none border-l-0 py-5 pl-6">
           <div class="mb-6 flex items-center gap-6">
-            <JokerButton class="w-14" joker="50-50" state="used" />
+            <JokerButton
+              class="w-14"
+              joker="50-50"
+              :state="jokers.fifty.state"
+              @click="handleJokerClick('fifty')"
+            />
             <strong>50 : 50</strong>
           </div>
           <div class="mb-6 flex items-center gap-6">
-            <JokerButton class="w-14" joker="public" />
+            <JokerButton
+              class="w-14"
+              joker="public"
+              :state="jokers.chat.state"
+              @click="handleJokerClick('chat')"
+            />
             <strong>Aide du chat</strong>
           </div>
           <div class="flex items-center gap-6">
-            <JokerButton class="w-14" joker="phone" />
+            <JokerButton
+              class="w-14"
+              joker="phone"
+              :state="jokers.friend.state"
+              @click="handleJokerClick('friend')"
+            />
             <strong>Appel à un ami</strong>
           </div>
         </Frame>
@@ -100,9 +138,21 @@ const buttons = reactive<{ a: Button; b: Button; c: Button; d: Button }>({
           class="justify-centerpx-8 flex flex-col justify-center gap-4 px-5"
         >
           <strong>JOKER</strong>
-          <JokerButton joker="50-50" state="used" />
-          <JokerButton joker="public" />
-          <JokerButton joker="phone" />
+          <JokerButton
+            joker="50-50"
+            :state="jokers.fifty.state"
+            @click="handleJokerClick('fifty')"
+          />
+          <JokerButton
+            joker="public"
+            :state="jokers.chat.state"
+            @click="handleJokerClick('chat')"
+          />
+          <JokerButton
+            joker="phone"
+            :state="jokers.friend.state"
+            @click="handleJokerClick('friend')"
+          />
         </div>
         <div class="flex flex-col items-end gap-4">
           <Tag label="CANDIDAT" class="mr-8" v-if="sceneTwoCams" />
@@ -120,27 +170,27 @@ const buttons = reactive<{ a: Button; b: Button; c: Button; d: Button }>({
         <div class="grid w-full grid-cols-2 gap-4">
           <ChoiceButton
             option="A"
-            :label="buttons.a.label"
-            :variant="buttons.a.variant"
+            :label="choices.a.label"
+            :variant="choices.a.variant"
           />
           <ChoiceButton
             option="B"
-            :label="buttons.b.label"
-            :variant="buttons.b.variant"
+            :label="choices.b.label"
+            :variant="choices.b.variant"
           />
           <ChoiceButton
             option="C"
-            :label="buttons.c.label"
-            :variant="buttons.c.variant"
+            :label="choices.c.label"
+            :variant="choices.c.variant"
           />
           <ChoiceButton
             option="D"
-            :label="buttons.d.label"
-            :variant="buttons.d.variant"
+            :label="choices.d.label"
+            :variant="choices.d.variant"
           />
         </div>
         <div class="mt-8 flex justify-center">
-          <PrimaryButton @click="level++">Valider {{ level }}</PrimaryButton>
+          <PrimaryButton @click="level++">Valider</PrimaryButton>
         </div>
       </div>
     </div>

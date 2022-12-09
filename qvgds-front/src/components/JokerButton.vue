@@ -6,9 +6,11 @@ import PhoneIcon from "@/components/icons/PhoneIcon.vue";
 import FiftyFiftyIcon from "@/components/icons/FiftyFiftyIcon.vue";
 import XIcon from "@/components/icons/XIcon.vue";
 
+export type JokerState = "default" | "active" | "used";
+
 interface Props {
   class?: string;
-  state?: "default" | "active" | "used";
+  state?: JokerState;
   joker: "50-50" | "public" | "phone" | "switch";
 }
 
