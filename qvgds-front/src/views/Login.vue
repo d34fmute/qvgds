@@ -13,7 +13,7 @@ const options: DropdownOption[] = [
 
 <template>
   <main
-    class="flex h-full min-h-screen w-full flex-col justify-center bg-emojis bg-100-auto px-10 text-white"
+    class="flex h-full min-h-screen w-full flex-col justify-center bg-emojis bg-auto bg-top px-10 text-white"
   >
     <img src="/logo-with-shit.png" alt="Logo shitcoin" class="mx-auto" />
     <form class="mt-10 mt-20 flex flex-col items-center" action="">

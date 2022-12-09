@@ -1,10 +1,17 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 
+export type ButtonVariant =
+  | "valid"
+  | "invalid"
+  | "selected"
+  | "hollow"
+  | "disabled";
+
 interface Props {
   class?: string;
   type?: "button" | "submit";
-  variant?: "valid" | "invalid" | "selected" | "hollow" | "disabled";
+  variant?: ButtonVariant;
   option: "A" | "B" | "C" | "D";
   label: string;
 }

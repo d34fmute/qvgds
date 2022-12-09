@@ -40,21 +40,22 @@ const colorClasses = computed<string>(() => {
       props.class,
       colorClasses,
       'relative',
-      'flex w-full items-center justify-center gap-2 rounded-2xl py-3 px-3',
+      'flex w-full items-center justify-center gap-2 rounded-2xl p-1',
       'disabled:cursor-not-allowed',
-      'font-bold text-white'
+      'font-bold text-white',
+      'aspect-square'
     ]"
     type="button"
     @click="emit('click')"
     :disabled="props.state === 'used'"
   >
     <XIcon
-      class="absolute top-1/2 left-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 text-danger"
+      class="absolute top-1/2 left-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 text-danger"
       v-if="props.state === 'used'"
     />
-    <PublicIcon class="h-4 w-4" v-if="joker === 'public'" />
-    <SwitchIcon class="h-4 w-4" v-if="joker === 'switch'" />
-    <PhoneIcon class="h-4 w-4" v-if="joker === 'phone'" />
-    <FiftyFiftyIcon class="h-4 w-4" v-if="joker === '50-50'" />
+    <PublicIcon class="h-7 w-7" v-if="joker === 'public'" />
+    <SwitchIcon class="h-7 w-7" v-if="joker === 'switch'" />
+    <PhoneIcon class="h-7 w-7" v-if="joker === 'phone'" />
+    <FiftyFiftyIcon class="h-7 w-7" v-if="joker === '50-50'" />
   </button>
 </template>

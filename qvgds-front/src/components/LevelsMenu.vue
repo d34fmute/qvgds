@@ -1,27 +1,31 @@
 <script lang="ts" setup>
 import Frame from "@/components/Frame.vue";
+import { computed } from "@vue/reactivity";
+
 interface Props {
   class?: string;
   currentLevel: number;
+  right: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentLevel: 0,
-  class: ""
+  class: "",
+  right: true
 });
 
 const levelsAmount = [
   100, 200, 300, 500, 1_000, 2_000, 4_000, 8_000, 12_000, 24_000, 36_000,
   72_000, 150_000, 300_000, 1_000_000
 ];
-const currentLevelInverse = 15 - props.currentLevel;
+const currentLevelInverse = computed(() => 15 - props.currentLevel);
 </script>
 
 <template>
   <Frame
-    :class="`flex items-center justify-center py-5 pl-6 ${
-      props.class ?? ''
-    } rounded-r-none border-r-0`"
+    :class="`flex items-center justify-center py-5 pl-6 ${props.class ?? ''} ${
+      props.right ? 'rounded-r-none border-r-0' : 'rounded-l-none border-l-0'
+    }`"
   >
     <ul class="flex flex-col">
       <li
