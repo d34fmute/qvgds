@@ -36,7 +36,6 @@ final class SessionsController
     {
         $this->sessions->list();
 
-        //
         return view('session.index');
     }
 
@@ -49,14 +48,6 @@ final class SessionsController
         $session = $this->sessions->create($sessionId, $name);
 
         return new JsonResponse(SessionsController::serializeSession($session), Response::HTTP_CREATED);
-    }
-
-    // Store in database
-    public function store(Request $request)
-    {
-        // Exemple de creation
-        // $session = $this->sessions->create(SessionId::newId(), 'session_test');
-
     }
 
     public function show(string $id): Response
@@ -82,21 +73,6 @@ final class SessionsController
         $session = $this->sessions->addQuestion(SessionId::from($sessionId), new QuestionToAdd(QuestionId::newId(), $text, new GoodAnswer(new Answer($goodAnswer)), new BadAnswers(new Answer($badAnswer1), new Answer($badAnswer2), new Answer($badAnswer3))));
 
         return new JsonResponse(SessionsController::serializeSession($session));
-    }
-
-    public function edit(Session $session)
-    {
-        //
-    }
-
-    public function update(Request $request, Session $session)
-    {
-        //
-    }
-
-    public function destroy(Session $session)
-    {
-        //
     }
 
     /**
