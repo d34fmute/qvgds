@@ -42,7 +42,7 @@ final class GamesManager
         return $game;
     }
 
-    public function guess(GameId $id, Answer $answer): bool
+    public function guess(GameId $id, Answer $answer): Game
     {
         $game = $this->get($id);
 
@@ -50,7 +50,7 @@ final class GamesManager
 
         $this->games->save($game);
 
-        return $guess;
+        return $game;
     }
 
     public function currentQuestion(GameId $gameId): Question

@@ -22,6 +22,7 @@ Route::get("/sessions/{id}", [SessionsController::class, "show"]);
 
 Route::post("/games", [GamesController::class, "start"]);
 Route::get("/games", [GamesController::class, "list"]);
+Route::get("/games/{id}", [GamesController::class, "get"]);
 Route::get("/games/{id}/current-question", [GamesController::class, "currentQuestion"]);
 Route::get("/games/{id}/jokers", [GamesController::class, "jokers"]);
 Route::get("/games/{id}/fifty-fifty", [GamesController::class, "fiftyFifty"]);

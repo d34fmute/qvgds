@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
+use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
@@ -30,14 +31,24 @@ final class GamesController
         return new JsonResponse($this->serialize($game));
     }
 
+    public function get(string $gameId): Response
+    {
+        $game = $this->getGame($gameId);
+
+        return new JsonResponse($this->serialize($game));
+    }
+
     /**
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     private function serialize(Game $game): array
     {
         return [
             "id" => $game->id()->get(),
-            "player" => $game->player()
+            "player" => $game->player(),
+            "step" => $game->step(),
+            "status" => $game->status(),
+            "jokers" => [$this->serializeJokers($game)]
         ];
     }
 
@@ -61,6 +72,7 @@ final class GamesController
         shuffle($answers);
 
         $json = [
+            "step" => $game->step(),
             "question" => $currentQuestion->text(),
             "answers" => array_map(fn(Answer $a): array => ["answer" => $a->text], $answers),
         ];
@@ -71,14 +83,13 @@ final class GamesController
     public function guess(Request $request, string $gameId): Response
     {
         $answer = $request->json()->get("answer");
-        $game = $this->getGame($gameId);
 
-        $guess = $game->guess(new Answer($answer));
+        $game = $this->games->guess(new GameId(Uuid::fromString($gameId)), new Answer($answer));
 
         $json = ["shitcoins" => $game->shitCoins()->amount()];
-        return match ($guess) {
-            true => new JsonResponse($json),
-            false => new JsonResponse($json, Response::HTTP_BAD_REQUEST)
+        return match ($game->status()) {
+            GameStatus::IN_PROGRESS => new JsonResponse($json),
+            GameStatus::LOST => new JsonResponse($json, Response::HTTP_BAD_REQUEST)
         };
     }
 
@@ -109,13 +120,7 @@ final class GamesController
     public function jokers(string $gameId): Response
     {
         $game = $this->getGame($gameId);
-        $jokers = array_map(
-            fn(Joker $joker): array => [
-                "type" => $joker->type(),
-                "status" => $joker->status()
-            ],
-            $game->jokers()->all()
-        );
+        $jokers = $this->serializeJokers($game);
 
         return new JsonResponse([$jokers]);
     }
@@ -123,6 +128,22 @@ final class GamesController
     private function getGame(string $gameId): Game
     {
         return $this->games->get(new GameId(Uuid::fromString($gameId)));
+    }
+
+    private function serializeJoker(): \Closure
+    {
+        return fn(Joker $joker): array => [
+            "type" => $joker->type(),
+            "status" => $joker->status()
+        ];
+    }
+
+    private function serializeJokers(Game $game): array
+    {
+        return array_map(
+            $this->serializeJoker(),
+            $game->jokers()->all()
+        );
     }
 
 }
