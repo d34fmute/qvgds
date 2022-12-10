@@ -3,6 +3,7 @@ import { computed } from "vue";
 
 interface Props {
   class?: string;
+  id: string;
   type?: string;
   placeholder?: string;
   modelValue?: string;
@@ -16,6 +17,7 @@ interface Events {
 
 const props = withDefaults(defineProps<Props>(), {
   class: "",
+  id: "",
   type: "text",
   modelValue: "",
   autoFocus: false
@@ -37,9 +39,11 @@ const value = computed<string>({
   <input
     :autofocus="autoFocus"
     v-model.trim="value"
+    :id="props.id"
     :placeholder="placeholder"
     :type="type"
     :class="[
+      props.class,
       'rounded-2xl border-white bg-white/10 py-3 px-3',
       'border-2 border-white/10 bg-transparent',
       'ring-primary focus:outline-none focus:ring-4',

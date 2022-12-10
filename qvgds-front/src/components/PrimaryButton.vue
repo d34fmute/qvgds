@@ -41,7 +41,7 @@ const buttonDisabled = computed(() => props.isLoading || props.disabled);
   >
     <div
       :class="[
-        'flex h-full w-full items-center gap-2 rounded-2.5xl py-4 px-4',
+        'flex h-full w-full items-center gap-2 rounded-2.5xl py-4 px-6',
         'bg-gradient-to-b from-primary to-primary/30',
         'justify-center'
       ]"

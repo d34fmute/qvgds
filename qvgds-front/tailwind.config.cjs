@@ -4,6 +4,13 @@ module.exports = {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      backgroundImage:{
+        'emojis': "url(/emojis/emojis-background.png), linear-gradient(180deg, #140C2E 0%, #261D45 100%)",
+        'emojis-half': "url(/emojis/emojis-background.png), linear-gradient(180deg, #291f47 0%, #291f47 500px, #140c2e 500px, #261d45 100%)"
+      },
+      backgroundSize:{
+        '100-auto': '100% auto'
+      },
       borderRadius: {
         "2.5xl": "18px",
         inherit: "inherit"
