@@ -7,10 +7,10 @@ export interface DropdownOption {
 }
 interface Props {
   class?: string;
-  type?: "button" | "submit";
   disabled?: boolean;
   isLoading?: boolean;
   options?: DropdownOption[];
+  modelValue: string;
 }
 interface Events {
   (e: "change"): void;
@@ -18,13 +18,16 @@ interface Events {
 
 const props = withDefaults(defineProps<Props>(), {
   class: "",
-  type: "button",
   disabled: false,
   isLoading: false,
   options: () => []
 });
 
-const emit = defineEmits<Events>();
+const emit = defineEmits(["update:modelValue"]);
+
+const handleChange = (e: any) => {
+  console.log(e);
+};
 </script>
 
 <style>
@@ -59,5 +62,8 @@ const emit = defineEmits<Events>();
       'font-bold uppercase text-white'
     ]"
     :options="options"
+    :value="modelValue"
+    :loading="isLoading"
+    @option:selected="emit('update:modelValue', $event.value)"
   ></v-select>
 </template>

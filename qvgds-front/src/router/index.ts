@@ -17,7 +17,7 @@ const router = createRouter({
       component: DesignSystemView
     },
     {
-      path: "/game",
+      path: "/game/:sessionId/:username",
       name: "game",
       component: GameView
     }

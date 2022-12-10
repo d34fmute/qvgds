@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import PrimaryButton from "@/components/PrimaryButton.vue";
-import type { DropdownOption } from "@/components/Dropdown.vue";
 import LevelsMenu from "@/components/LevelsMenu.vue";
 import WebcamFrame from "@/components/WebcamFrame.vue";
 import Tag from "@/components/Tag.vue";
@@ -11,25 +10,35 @@ import ChoiceButton, {
 import { reactive, ref } from "vue";
 import Frame from "@/components/Frame.vue";
 import SwitchSceneIcon from "@/components/icons/SwitchSceneIcon.vue";
+import { useRoute } from "vue-router";
+import { getQuestionsBySessionId } from "@/airtable/questions";
+import { useQuery } from "@tanstack/vue-query";
+import { computed } from "@vue/reactivity";
 
-const options: DropdownOption[] = [
-  { value: "session1", label: "Session 1" },
-  { value: "session2", label: "Session 2" },
-  { value: "session3", label: "Session 3" }
-];
+const route = useRoute();
+
+const sessionId = route.params.sessionId;
+
+const {
+  isLoading,
+  isError,
+  data: questions,
+  error
+} = useQuery({
+  queryKey: ["sessions"],
+  queryFn: () => getQuestionsBySessionId(sessionId as string)
+});
+
 const sceneTwoCams = ref(true);
 
 const level = ref(1);
 
-interface Choice {
-  label: string;
-  variant?: ButtonVariant;
-}
-const choices = reactive<{ a: Choice; b: Choice; c: Choice; d: Choice }>({
-  a: { label: "1994" },
-  b: { label: "1994", variant: "selected" },
-  c: { label: "1994", variant: "valid" },
-  d: { label: "1994", variant: "invalid" }
+const gameOver = ref(false);
+
+const currentQuestion = computed(() => {
+  return questions.value?.find(
+    (question) => question.fields.level === `${level.value}`
+  );
 });
 
 interface Joker {
@@ -54,6 +63,56 @@ const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
     currentJoker.state = "active";
   }
 };
+
+type Choice = "a" | "b" | "c" | "d";
+
+const currentChoice = ref<Choice | undefined>();
+const choiceValidated = ref<boolean>(false);
+
+const getButtonVariant = (choice: Choice): ButtonVariant | undefined => {
+  if (currentChoice.value === undefined) {
+    return;
+  }
+  if (
+    currentQuestion.value?.fields.answer === choice &&
+    choiceValidated.value
+  ) {
+    return "valid";
+  }
+  if (
+    currentQuestion.value?.fields.answer !== choice &&
+    choiceValidated.value &&
+    currentChoice.value === choice
+  ) {
+    return "invalid";
+  }
+  if (currentChoice.value === choice) {
+    console.log("currentChoice.value", currentChoice.value);
+    return "selected";
+  }
+};
+
+const handleChoice = (choice: Choice) => {
+  currentChoice.value = choice;
+};
+
+const handleResolution = () => {
+  console.log(
+    "currentQuestion.value?.fields.answer",
+    currentQuestion.value?.fields.answer
+  );
+  console.log("currentChoice.value", currentChoice.value);
+  if (currentQuestion.value?.fields.answer !== currentChoice.value) {
+    gameOver.value = true;
+  }
+  choiceValidated.value = true;
+};
+
+const handleNextQuestion = () => {
+  level.value++;
+  choiceValidated.value = false;
+  currentChoice.value = undefined;
+};
 </script>
 
 <template>
@@ -75,7 +134,9 @@ const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
           v-if="!sceneTwoCams"
         />
         <div class="mt-52 mb-2"><span class="text-white/50">Joueur</span></div>
-        <div><strong class="text-3xl">CANDIDAT</strong></div>
+        <div>
+          <strong class="text-3xl">{{ $route.params.username }}</strong>
+        </div>
       </div>
       <div class="mt-40">
         <p class="mb-4 w-72 text-center">
@@ -155,7 +216,11 @@ const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
           />
         </div>
         <div class="flex flex-col items-end gap-4">
-          <Tag label="CANDIDAT" class="mr-8" v-if="sceneTwoCams" />
+          <Tag
+            :label="($route.params.username as string)"
+            class="mr-8 uppercase"
+            v-if="sceneTwoCams"
+          />
           <WebcamFrame
             :class="`${!sceneTwoCams && 'mt-20 h-[466px] w-[836px]'}`"
           />
@@ -163,34 +228,51 @@ const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
       </div>
       <div class="pt-4">
         <div class="flex min-h-[160px] max-w-7xl flex-col justify-center">
-          <p class="text-4xl">
-            En quelle année a été créé le PHP depuis sa création en 1994 ?
+          <p class="whitespace-pre-line text-4xl">
+            {{ currentQuestion?.fields.title }}
           </p>
         </div>
-        <div class="grid w-full grid-cols-2 gap-4">
+        <div class="grid w-full grid-cols-2 gap-4" v-if="currentQuestion">
           <ChoiceButton
             option="A"
-            :label="choices.a.label"
-            :variant="choices.a.variant"
+            :label="currentQuestion.fields.a"
+            :variant="getButtonVariant('a')"
+            @click="handleChoice('a')"
           />
           <ChoiceButton
             option="B"
-            :label="choices.b.label"
-            :variant="choices.b.variant"
+            :label="currentQuestion.fields.b"
+            :variant="getButtonVariant('b')"
+            @click="handleChoice('b')"
           />
           <ChoiceButton
             option="C"
-            :label="choices.c.label"
-            :variant="choices.c.variant"
+            :label="currentQuestion.fields.c"
+            :variant="getButtonVariant('c')"
+            @click="handleChoice('c')"
           />
           <ChoiceButton
             option="D"
-            :label="choices.d.label"
-            :variant="choices.d.variant"
+            :label="currentQuestion.fields.d"
+            :variant="getButtonVariant('d')"
+            @click="handleChoice('d')"
           />
         </div>
         <div class="mt-8 flex justify-center">
-          <PrimaryButton @click="level++">Valider</PrimaryButton>
+          <div v-if="gameOver">
+            <strong>PERDU !</strong>
+          </div>
+          <div v-else>
+            <PrimaryButton
+              v-if="!choiceValidated"
+              :disabled="currentChoice === undefined"
+              @click="handleResolution"
+              >Valider</PrimaryButton
+            >
+            <PrimaryButton v-if="choiceValidated" @click="handleNextQuestion"
+              >Question suivante</PrimaryButton
+            >
+          </div>
         </div>
       </div>
     </div>

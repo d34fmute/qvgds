@@ -7,6 +7,7 @@ import App from "./App.vue";
 import router from "./router";
 
 import vSelect from 'vue-select'
+import { VueQueryPlugin } from '@tanstack/vue-query';
 
 
 const i18n = createI18n({
@@ -18,6 +19,7 @@ const app = createApp(App);
 app.use(i18n);
 app.use(createPinia());
 app.use(router);
+app.use(VueQueryPlugin)
 
 app.component('v-select', vSelect)
 
