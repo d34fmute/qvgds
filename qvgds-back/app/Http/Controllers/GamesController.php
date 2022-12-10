@@ -8,6 +8,7 @@ use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\Joker;
+use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\SessionId;
@@ -72,6 +73,7 @@ final class GamesController
         shuffle($answers);
 
         $json = [
+            "reward" => ShitCoins::fromLevel($game->step(), $game->status())->amount(),
             "step" => $game->step(),
             "question" => $currentQuestion->text(),
             "answers" => array_map(fn(Answer $a): array => ["answer" => $a->text], $answers),

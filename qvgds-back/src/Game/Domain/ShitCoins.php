@@ -36,6 +36,7 @@ final class ShitCoins
     private static function pyramid(): array
     {
         return [
+            0 => 0,
             1 => 100,
             2 => 200,
             3 => 300,

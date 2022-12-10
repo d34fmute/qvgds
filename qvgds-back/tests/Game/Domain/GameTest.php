@@ -105,4 +105,14 @@ final class GameTest extends TestCase
         $this->expectExceptionMessage("Game FORGIVEN");
         $forgivenGame->guess(new Answer("don’t care"));
     }
+
+    /**
+     * @test
+     */
+    public function gameStartedShouldHaveZeroShitcoin(): void
+    {
+        $game = GameFixtures::newGame();
+
+        self::assertEquals(ShitCoins::of(0), $game->shitCoins());
+    }
 }
