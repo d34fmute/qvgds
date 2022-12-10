@@ -6,6 +6,7 @@ namespace QVGDS\Game\Domain;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerType;
 use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Utils\Assert;
 
@@ -63,11 +64,11 @@ final class Game
     /**
      * @return Answer[]
      */
-    public function fiftyFifty(int $step): array
+    public function fiftyFifty(): array
     {
         $this->jokers->use(JokerType::FIFTY_FIFTY);
 
-        return $this->session->fiftyFifty($step);
+        return $this->session->fiftyFifty($this->step);
     }
 
     public function id(): GameId
@@ -75,7 +76,7 @@ final class Game
         return $this->id;
     }
 
-    public function currentQuestion(): string
+    public function currentQuestion(): Question
     {
         return $this->session->question($this->step);
     }

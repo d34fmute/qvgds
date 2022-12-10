@@ -9,8 +9,8 @@ final class GoodAnswer
     {
     }
 
-    public function get(): string
+    public function get(): Answer
     {
-        return $this->text->text;
+        return $this->text;
     }
 }

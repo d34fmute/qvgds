@@ -27,7 +27,7 @@ final class Session
         return $this->id;
     }
 
-    public function name(): String
+    public function name(): string
     {
         return $this->name;
     }
@@ -62,7 +62,7 @@ final class Session
     {
         $questions = array_filter($this->questions, fn(Question $q): bool => $q->step() == $id);
         if (empty($questions)) {
-            throw new QuestionNotFoundException((string) $id);
+            throw new QuestionNotFoundException((string)$id);
         }
 
         return array_pop($questions);
@@ -73,8 +73,8 @@ final class Session
         return count($this->questions) + 1;
     }
 
-    public function question(int $id): string
+    public function question(int $id): Question
     {
-        return $this->findQuestion($id)->text();
+        return $this->findQuestion($id);
     }
 }

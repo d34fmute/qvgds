@@ -85,4 +85,9 @@ final class ShitCoins
             default => self::converter($level)
         };
     }
+
+    public function amount(): int
+    {
+        return $this->amount;
+    }
 }

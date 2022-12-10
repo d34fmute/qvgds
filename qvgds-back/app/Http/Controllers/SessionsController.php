@@ -117,7 +117,7 @@ final class SessionsController
             "id" => $question->id()->get(),
             "text" => $question->text(),
             "step" => $question->step(),
-            "goodAnswer" => $question->goodAnswer(),
+            "goodAnswer" => $question->goodAnswer()->text,
             "badAnswers" => array_map(fn(Answer $answer): string => $answer->text, $question->badAnswers())
         ];
     }

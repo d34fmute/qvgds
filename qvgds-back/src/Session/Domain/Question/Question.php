@@ -10,8 +10,8 @@ final class Question
 
     public function __construct(
         private readonly QuestionId $id,
-        private readonly int $step,
-        private readonly string $text,
+        private readonly int        $step,
+        private readonly string     $text,
         private readonly GoodAnswer $goodAnswer,
         private readonly BadAnswers $badAnswers,
     )
@@ -43,7 +43,7 @@ final class Question
         return $this->text;
     }
 
-    public function goodAnswer(): string
+    public function goodAnswer(): Answer
     {
         return $this->goodAnswer->get();
     }

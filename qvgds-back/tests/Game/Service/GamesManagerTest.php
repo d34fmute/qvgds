@@ -28,8 +28,8 @@ final class GamesManagerTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldNotStartAGameWithUnknownSession(): void
     {
         $this->expectException(SessionNotFoundException::class);
@@ -37,8 +37,8 @@ final class GamesManagerTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldGetTheStartedGame(): void
     {
         $this->prepareGame();
@@ -47,8 +47,8 @@ final class GamesManagerTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shoulListGames(): void
     {
         $this->prepareGame();
@@ -57,8 +57,8 @@ final class GamesManagerTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldFailOnNotFoundGame(): void
     {
         $this->expectException(UnknownGameException::class);
@@ -66,20 +66,20 @@ final class GamesManagerTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldGetCurrentQuestion(): void
     {
         $this->prepareGame();
 
         $question = $this->service->currentQuestion(GameFixtures::gameId());
 
-        self::assertEquals(SessionFixtures::question()->text(), $question);
+        self::assertEquals(SessionFixtures::question(), $question);
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldAnswerFistQuestion(): void
     {
         $this->prepareGame();

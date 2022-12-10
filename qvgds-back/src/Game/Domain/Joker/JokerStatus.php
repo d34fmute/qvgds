@@ -3,17 +3,9 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain\Joker;
 
-enum JokerStatus
+enum JokerStatus: string
 {
 
-    case AVAILABLE;
-    case ALREADY_USED;
-
-    public static function from(string $status): self
-    {
-        return match ($status) {
-          JokerStatus::AVAILABLE->name => JokerStatus::AVAILABLE,
-          JokerStatus::ALREADY_USED->name => JokerStatus::ALREADY_USED,
-        };
-    }
+    case AVAILABLE = "AVAILABLE";
+    case ALREADY_USED = "ALREADY_USED";
 }

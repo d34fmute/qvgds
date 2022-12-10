@@ -42,7 +42,11 @@ final class LaravelGamesRepository implements GamesRepository
 
     public function get(GameId $id): ?Game
     {
-
+        $game = LaravelGame::find($id->get());
+        if ($game === null) {
+            return null;
+        }
+        return $this->toDomain($game);
     }
 
     /**

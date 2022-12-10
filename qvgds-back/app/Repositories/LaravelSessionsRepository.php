@@ -84,7 +84,7 @@ final class LaravelSessionsRepository implements SessionsRepository
                 "session" => $sessionId->get(),
                 "step" => $question->step(),
                 "question" => $question->text(),
-                "good_answer" => $question->goodAnswer(),
+                "good_answer" => $question->goodAnswer()->text,
                 "bad_answer1" => $question->badAnswers()[0]->text,
                 "bad_answer2" => $question->badAnswers()[1]->text,
                 "bad_answer3" => $question->badAnswers()[2]->text,

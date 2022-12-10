@@ -55,7 +55,7 @@ final class GameTest extends TestCase
     {
         $game = GameFixtures::newGame();
 
-        $this->assertCount(2, $game->fiftyFifty(1));
+        $this->assertCount(2, $game->fiftyFifty());
 
         self::assertCount(2, $game->availableJokers());
     }
