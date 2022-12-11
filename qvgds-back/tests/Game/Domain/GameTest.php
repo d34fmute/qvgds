@@ -29,16 +29,6 @@ final class GameTest extends TestCase
     /**
      * @test
      */
-    public function shouldListAvailableJokers(): void
-    {
-        $game = GameFixtures::newGame();
-
-        $this->assertCount(3, $game->availableJokers());
-    }
-
-    /**
-     * @test
-     */
     public function shouldIncrementScoreWithAGoodAnswer(): void
     {
         $game = GameFixtures::newGame();
@@ -46,18 +36,6 @@ final class GameTest extends TestCase
         $game->guess(new Answer("Good answer"));
 
         $this->assertEquals(ShitCoins::of(100), $game->shitCoins());
-    }
-
-    /**
-     * @test
-     */
-    public function shouldRevealTwoBadAnswersWithFiftyFifty(): void
-    {
-        $game = GameFixtures::newGame();
-
-        $this->assertCount(2, $game->fiftyFifty());
-
-        self::assertCount(2, $game->availableJokers());
     }
 
     /**

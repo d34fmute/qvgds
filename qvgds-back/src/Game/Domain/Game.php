@@ -30,14 +30,6 @@ final class Game
         return new self($id, $player, new Jokers(), $session, GameStatus::IN_PROGRESS);
     }
 
-    /**
-     * @return JokerType[]
-     */
-    public function availableJokers(): array
-    {
-        return $this->jokers->availables();
-    }
-
     public function jokers(): Jokers
     {
         return $this->jokers;

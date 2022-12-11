@@ -4,7 +4,7 @@ namespace QVGDS\Game\Domain\Joker;
 
 abstract class Joker
 {
-    public function __construct(protected readonly JokerStatus $status)
+    final public function __construct(protected readonly JokerStatus $status)
     {
     }
 
@@ -13,7 +13,7 @@ abstract class Joker
         return $this->status === JokerStatus::AVAILABLE;
     }
 
-    public abstract function type(): JokerType;
+    abstract public function type(): JokerType;
 
     public function status(): JokerStatus
     {
@@ -23,7 +23,7 @@ abstract class Joker
     public function use(): Joker
     {
         if (!$this->canBeUsed()) {
-            throw new JokerNotAvailableException();
+            throw new JokerNotAvailableException("Joker already used");
         }
         return new static(JokerStatus::ALREADY_USED);
     }

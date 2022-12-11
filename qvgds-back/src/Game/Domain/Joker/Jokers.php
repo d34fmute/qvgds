@@ -15,30 +15,12 @@ final class Jokers
         $this->buildJokers($jokers);
     }
 
-    /**
-     * @return JokerType[]
-     */
-    public function availables(): array
-    {
-        return $this->computeAvailable();
-    }
-
     public function use(JokerType $jokerType): void
     {
+        if (!array_key_exists($jokerType->name, $this->jokers)) {
+            throw new JokerNotAvailableException("Joker not available");
+        }
         $this->jokers[$jokerType->name] = $this->jokers[$jokerType->name]->use();
-    }
-
-    /**
-     * @return JokerType[]
-     */
-    private function computeAvailable(): array
-    {
-        $jokers = array_values($this->jokers);
-        $filter = array_filter($jokers, fn(Joker $joker): bool => $joker->canBeUsed());
-        return array_map(
-            callback: fn(Joker $joker): JokerType => $joker->type(),
-            array: $filter
-        );
     }
 
     /**

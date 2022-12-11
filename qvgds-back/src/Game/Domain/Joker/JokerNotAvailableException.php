@@ -7,9 +7,9 @@ use Exception;
 
 final class JokerNotAvailableException extends Exception
 {
-    public function __construct()
+    public function __construct(string $message)
     {
-        parent::__construct("Joker already used");
+        parent::__construct($message);
     }
 
 }
