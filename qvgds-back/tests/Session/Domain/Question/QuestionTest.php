@@ -18,7 +18,7 @@ class QuestionTest extends TestCase
         self::expectException(MissingMandatoryValueException::class);
         self::expectExceptionMessage("text");
 
-        new Question(SessionFixtures::questionId(), "", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
+        new Question(SessionFixtures::questionId(), 1, "", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
     }
 
     /**
@@ -26,7 +26,7 @@ class QuestionTest extends TestCase
     */
     public function shouldAskForFiftyFifty(): void
     {
-        $question = new Question(SessionFixtures::questionId(), "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
+        $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
 
         $answers = $question->fiftyFifty();
 
@@ -40,7 +40,7 @@ class QuestionTest extends TestCase
     */
     public function shouldVerifyGoodAnswer(): void
     {
-        $question = new Question(SessionFixtures::questionId(), "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
+        $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
 
         self::assertTrue($question->guess(new Answer("Good answer")));
     }
@@ -50,7 +50,7 @@ class QuestionTest extends TestCase
     */
     public function shouldVerifyBadAnswer(): void
     {
-        $question = new Question(SessionFixtures::questionId(), "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
+        $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
 
         self::assertFalse($question->guess(new Answer("Bad answer")));
     }

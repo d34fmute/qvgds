@@ -11,7 +11,6 @@ use QVGDS\Session\Domain\SessionsRepository;
 
 final class SessionsManager
 {
-
     public function __construct(private readonly SessionsRepository $sessions)
     {
     }

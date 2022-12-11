@@ -2,23 +2,17 @@
 
 namespace Tests\Feature;
 
-
-
-use Illuminate\Support\Facades\Session;
-use QVGDS\Tests\TestCase;
-
-class ExampleTest extends TestCase
+class ExampleTest
 {
     /**
      * A basic test example.
      *
      * @return void
      */
-    public function test_the_application_returns_a_successful_response(): void
+    public function the_application_returns_a_successful_response(): void
     {
-        $response = $this->getJson('/api/games');
-
-        $response->assertStatus(200);
-        $response->assertContent("[]");
+//        $response = $this->getJson('/api/sessions');
+//
+//        $response->assertStatus(200);
     }
 }

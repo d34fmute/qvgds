@@ -8,11 +8,12 @@ use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GamesRepository;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\SessionId;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Session\Domain\SessionsRepository;
 
-final class GamesService
+final class GamesManager
 {
     public function __construct(private readonly GamesRepository $games, private readonly SessionsRepository $sessions)
     {
@@ -41,7 +42,7 @@ final class GamesService
         return $game;
     }
 
-    public function guess(GameId $id, Answer $answer): bool
+    public function guess(GameId $id, Answer $answer): Game
     {
         $game = $this->get($id);
 
@@ -49,10 +50,10 @@ final class GamesService
 
         $this->games->save($game);
 
-        return $guess;
+        return $game;
     }
 
-    public function currentQuestion(GameId $gameId): string
+    public function currentQuestion(GameId $gameId): Question
     {
         $game = $this->get($gameId);
         return $game->currentQuestion();
@@ -64,5 +65,18 @@ final class GamesService
     public function list(): array
     {
         return $this->games->list();
+    }
+
+    /**
+     * @return Answer[]
+     */
+    public function fiftyFifty(GameId $gameId): array
+    {
+        $game = $this->get($gameId);
+
+        $answers = $game->fiftyFifty();
+        $this->games->save($game);
+
+        return $answers;
     }
 }

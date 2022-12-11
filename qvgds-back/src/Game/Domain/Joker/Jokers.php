@@ -6,50 +6,44 @@ namespace QVGDS\Game\Domain\Joker;
 final class Jokers
 {
     /**
-     * @var JokerType[]
-     */
-    private array $available;
-
-    /**
      * @var Joker[]
      */
     private array $jokers;
 
     public function __construct(Joker ...$jokers)
     {
-        $this->jokers = empty($jokers) ? [
-            new FiftyFifty(JokerStatus::AVAILABLE),
-            new CallAFriend(JokerStatus::AVAILABLE),
-            new AudienceHelp(JokerStatus::AVAILABLE)
-        ]: $jokers;
-
-        $this->available = $this->computeAvailable();
-    }
-
-    /**
-     * @return JokerType[]
-     */
-    public function availables(): array
-    {
-        return $this->available;
+        $this->buildJokers($jokers);
     }
 
     public function use(JokerType $jokerType): void
     {
-        if (!in_array($jokerType, $this->availables())) {
-            throw new JokerNotAvailableException();
+        if (!array_key_exists($jokerType->name, $this->jokers)) {
+            throw new JokerNotAvailableException("Joker not available");
         }
-        $this->available = array_filter($this->available, fn(JokerType $type): bool => $type != $jokerType);
+        $this->jokers[$jokerType->name] = $this->jokers[$jokerType->name]->use();
     }
 
     /**
-     * @return JokerType[]
+     * @return Joker[]
      */
-    private function computeAvailable(): array
+    public function all(): array
     {
-        return array_map(
-            callback: fn(Joker $joker): JokerType => $joker->type(),
-            array:    array_filter($this->jokers, fn(Joker $joker): bool => $joker->canBeUsed())
-        );
+        return $this->jokers;
+    }
+
+    /**
+     * @param Joker[] $jokers
+     */
+    private function buildJokers(array $jokers): void
+    {
+        if (empty($jokers)) {
+            $this->jokers = [
+                JokerType::FIFTY_FIFTY->value => new FiftyFifty(JokerStatus::AVAILABLE),
+                JokerType::CALL_A_FRIEND->value => new CallAFriend(JokerStatus::AVAILABLE),
+                JokerType::AUDIENCE_HELP->value => new AudienceHelp(JokerStatus::AVAILABLE)
+            ];
+        } else {
+            array_walk($jokers, fn(Joker $joker) => $this->jokers[$joker->type()->value] = $joker);
+        }
     }
 }

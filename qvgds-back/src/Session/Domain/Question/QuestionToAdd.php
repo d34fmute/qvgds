@@ -6,7 +6,7 @@ namespace QVGDS\Session\Domain\Question;
 final class QuestionToAdd
 {
 
-    public function __construct(public readonly string $text, public readonly GoodAnswer $goodAnswer, public readonly BadAnswers $badAnswers)
+    public function __construct(public readonly QuestionId $id, public readonly string $text, public readonly GoodAnswer $goodAnswer, public readonly BadAnswers $badAnswers)
     {
     }
 }

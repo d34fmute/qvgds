@@ -8,4 +8,9 @@ final class GoodAnswer
     public function __construct(public readonly Answer $text)
     {
     }
+
+    public function get(): Answer
+    {
+        return $this->text;
+    }
 }

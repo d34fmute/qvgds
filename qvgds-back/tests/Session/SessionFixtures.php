@@ -23,7 +23,7 @@ final class SessionFixtures
 
     public static function questionId(): QuestionId
     {
-        return new QuestionId(1);
+        return new QuestionId(Uuid::fromString("71d3c885-135b-4223-a881-418e0382a34b"));
     }
 
     public static function goodAnswer(): GoodAnswer
@@ -42,7 +42,7 @@ final class SessionFixtures
 
     public static function question(): Question
     {
-        return new Question(self::questionId(), self::questionText(), self::goodAnswer(), self::badAnswers());
+        return new Question(self::questionId(),1, self::questionText(), self::goodAnswer(), self::badAnswers());
     }
 
     public static function sessionWithoutQuestions(): Session
@@ -57,7 +57,7 @@ final class SessionFixtures
 
     public static function questionToAdd(): QuestionToAdd
     {
-        return new QuestionToAdd(self::questionText(), self::goodAnswer(), self::badAnswers());
+        return new QuestionToAdd(SessionFixtures::questionId(), self::questionText(), self::goodAnswer(), self::badAnswers());
     }
 
     private static function questionText(): string

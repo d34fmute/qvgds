@@ -9,10 +9,10 @@ final class NumberAsserter
     {
     }
 
-    public function isEqualOrGreaterThan(int $int): void
+    public function isEqualOrGreaterThan(int $min): void
     {
-        if ($int >= $this->value){
-            throw new InvalidNumberArgumentException("$this->field must be equal or greater than 0");
+        if ($this->value < $min) {
+            throw new InvalidNumberArgumentException($this->field, $min);
         }
     }
 

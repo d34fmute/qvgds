@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain\Joker;
 
-enum JokerStatus
+enum JokerStatus: string
 {
 
-    case AVAILABLE;
-    case ALREADY_USED;
+    case AVAILABLE = "AVAILABLE";
+    case ALREADY_USED = "ALREADY_USED";
 }

@@ -36,6 +36,7 @@ final class ShitCoins
     private static function pyramid(): array
     {
         return [
+            0 => 0,
             1 => 100,
             2 => 200,
             3 => 300,
@@ -84,5 +85,10 @@ final class ShitCoins
             $level >= self::FIRST_THRESHOLD => self::converter(self::FIRST_THRESHOLD),
             default => self::converter($level)
         };
+    }
+
+    public function amount(): int
+    {
+        return $this->amount;
     }
 }
