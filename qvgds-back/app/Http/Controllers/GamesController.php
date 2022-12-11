@@ -86,11 +86,14 @@ final class GamesController
 
         $game = $this->games->guess(new GameId(Uuid::fromString($gameId)), new Answer($answer));
 
-        $json = ["shitcoins" => $game->shitCoins()->amount()];
-        return match ($game->status()) {
-            GameStatus::IN_PROGRESS => new JsonResponse($json),
-            GameStatus::LOST => new JsonResponse($json, Response::HTTP_BAD_REQUEST)
-        };
+        return new JsonResponse(
+            [
+                "shitcoins" => $game->shitCoins()->amount(),
+                "goodAnswer" => $game->currentQuestion()->goodAnswer()->text,
+                "gameStatus" => $game->status()->value
+            ],
+            $game->status() === GameStatus::LOST ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK
+        );
     }
 
     public function fiftyFifty(string $gameId): Response
