@@ -36,8 +36,7 @@ final class LaravelGamesRepository implements GamesRepository
             ["id"],
             ["laravel_session", "player", "step", "status",]
         );
-        $jokers = $game->jokers()->all();
-        $this->upsertJokers($jokers, $game->id());
+        $this->upsertJokers($game->jokers()->all(), $game->id());
     }
 
     public function get(GameId $id): ?Game
@@ -59,8 +58,8 @@ final class LaravelGamesRepository implements GamesRepository
             fn(Joker $joker) => LaravelJoker::upsert(
                 [
                     "game" => $gameId->get(),
-                    "type" => $joker->type()->name,
-                    "status" => $joker->status()->name,
+                    "type" => $joker->type(),
+                    "status" => $joker->status(),
                 ],
                 ["game"],
                 ["type", "status"]

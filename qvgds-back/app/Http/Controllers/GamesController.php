@@ -95,9 +95,9 @@ final class GamesController
 
     public function fiftyFifty(string $gameId): Response
     {
-        $game = $this->getGame($gameId);
+        $answers = $this->games->fiftyFifty(new GameId(Uuid::fromString($gameId)));
 
-        $json = array_map(fn(Answer $a): string => $a->text, $game->fiftyFifty());
+        $json = array_map(fn(Answer $a): string => $a->text, $answers);
         return new JsonResponse(["badAnswers" => $json]);
     }
 
@@ -110,7 +110,7 @@ final class GamesController
             "id" => $game->id()->get(),
             "player" => $game->player(),
             "step" => $game->step(),
-            "status" => $game->status()->name,
+            "status" => $game->status(),
             "questions" => [
                 array_map(
                     fn(Question $q): array => ["question" => $q->text(), "answers" => $this->serializeAnswers($q)],

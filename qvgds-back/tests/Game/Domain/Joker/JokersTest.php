@@ -6,15 +6,15 @@ namespace Game\Domain\Joker;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\Joker\CallAFriend;
 use QVGDS\Game\Domain\Joker\JokerNotAvailableException;
+use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerStatus;
 use QVGDS\Game\Domain\Joker\JokerType;
-use QVGDS\Game\Domain\Joker\Jokers;
 
 final class JokersTest extends TestCase
 {
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldListAvailableJokers(): void
     {
         $jokers = new Jokers();
@@ -23,8 +23,8 @@ final class JokersTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldNotUsedNotAvailableJoker(): void
     {
         $jokers = new Jokers(new CallAFriend(JokerStatus::ALREADY_USED));
@@ -35,14 +35,14 @@ final class JokersTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldUseAJoker(): void
     {
-        $jokers = new Jokers();
+        $jokers = new Jokers(new CallAFriend(JokerStatus::AVAILABLE));
         $jokers->use(JokerType::CALL_A_FRIEND);
 
-        $available = $jokers->availables();
-        self::assertEqualsCanonicalizing([JokerType::FIFTY_FIFTY, JokerType::AUDIENCE_HELP], $available);
+        self::assertEmpty($jokers->availables());
+        self::assertEquals([JokerType::CALL_A_FRIEND->value => new CallAFriend(JokerStatus::ALREADY_USED)], $jokers->all());
     }
 }

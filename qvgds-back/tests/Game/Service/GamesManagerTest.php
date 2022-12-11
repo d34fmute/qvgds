@@ -5,6 +5,11 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GameStatus;
+use QVGDS\Game\Domain\Joker\AudienceHelp;
+use QVGDS\Game\Domain\Joker\CallAFriend;
+use QVGDS\Game\Domain\Joker\FiftyFifty;
+use QVGDS\Game\Domain\Joker\Jokers;
+use QVGDS\Game\Domain\Joker\JokerStatus;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Game\Service\GamesManager;
@@ -89,6 +94,19 @@ final class GamesManagerTest extends TestCase
         $game = $this->service->get(GameFixtures::gameId());
 
         self::assertEquals(ShitCoins::fromLevel(1, GameStatus::IN_PROGRESS), $game->shitCoins());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUseOneJoker(): void
+    {
+        $this->prepareGame();
+        $this->service->fiftyFifty(GameFixtures::gameId());
+
+        $game = $this->service->get(GameFixtures::gameId());
+
+        self::assertEquals(new Jokers(new FiftyFifty(JokerStatus::ALREADY_USED), new CallAFriend(JokerStatus::AVAILABLE), new AudienceHelp(JokerStatus::AVAILABLE)), $game->jokers());
     }
 
     private function prepareGame(): void

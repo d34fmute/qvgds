@@ -66,4 +66,17 @@ final class GamesManager
     {
         return $this->games->list();
     }
+
+    /**
+     * @return Answer[]
+     */
+    public function fiftyFifty(GameId $gameId): array
+    {
+        $game = $this->get($gameId);
+
+        $answers = $game->fiftyFifty();
+        $this->games->save($game);
+
+        return $answers;
+    }
 }
