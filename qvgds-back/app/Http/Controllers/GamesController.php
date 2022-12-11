@@ -11,6 +11,7 @@ use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\SessionId;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -57,7 +58,7 @@ final class GamesController
     {
         $games = $this->games->list();
         $json = array_map(
-            fn(Game $game): array => $this->serializeWithSession($game),
+            fn(Game $game): array => $this->serializeWithQuestions($game),
             $games
         );
         return new JsonResponse($json);
@@ -68,15 +69,12 @@ final class GamesController
         $game = $this->getGame($gameId);
 
         $currentQuestion = $game->currentQuestion();
-        $answers = [$currentQuestion->goodAnswer(), ...$currentQuestion->badAnswers()];
-
-        shuffle($answers);
 
         $json = [
             "reward" => ShitCoins::fromLevel($game->step(), $game->status())->amount(),
             "step" => $game->step(),
             "question" => $currentQuestion->text(),
-            "answers" => array_map(fn(Answer $a): array => ["answer" => $a->text], $answers),
+            "answers" => $this->serializeAnswers($currentQuestion),
         ];
 
         return new JsonResponse($json);
@@ -106,15 +104,18 @@ final class GamesController
     /**
      * @return array<string, mixed>
      */
-    private function serializeWithSession(Game $game): array
+    private function serializeWithQuestions(Game $game): array
     {
         return [
             "id" => $game->id()->get(),
             "player" => $game->player(),
             "step" => $game->step(),
             "status" => $game->status()->name,
-            "session" => [
-                SessionsController::serializeSession($game->session())
+            "questions" => [
+                array_map(
+                    fn(Question $q): array => ["question" => $q->text(), "answers" => $this->serializeAnswers($q)],
+                    $game->session()->questions()
+                )
             ]
         ];
     }
@@ -146,6 +147,14 @@ final class GamesController
             $this->serializeJoker(),
             $game->jokers()->all()
         );
+    }
+
+    private function serializeAnswers(Question $question): array
+    {
+        $answers = [$question->goodAnswer(), ...$question->badAnswers()];
+        shuffle($answers);
+
+        return array_map(fn(Answer $a): array => ["answer" => $a->text], $answers);
     }
 
 }
