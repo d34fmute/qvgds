@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace QVGDS\Utils;
 
-use Exception;
+use QVGDS\Exception\QVGDSException;
 
-final class MissingMandatoryValueException extends Exception
+final class MissingMandatoryValueException extends QVGDSException
 {
 
 }

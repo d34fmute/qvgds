@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain;
 
-use Exception;
+use QVGDS\Exception\QVGDSException;
 
-final class InvalidShitCoinsException extends Exception
+final class InvalidShitCoinsException extends QVGDSException
 {
     public static function invalidAmount(int $amount): self
     {

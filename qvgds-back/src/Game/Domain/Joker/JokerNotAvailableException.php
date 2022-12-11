@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain\Joker;
 
-use Exception;
+use QVGDS\Exception\QVGDSException;
 
-final class JokerNotAvailableException extends Exception
+final class JokerNotAvailableException extends QVGDSException
 {
     public function __construct(string $message)
     {
-        parent::__construct($message);
+        parent::__construct($message, 400);
     }
 
 }

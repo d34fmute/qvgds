@@ -3,9 +3,13 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain;
 
-use Exception;
+use QVGDS\Exception\QVGDSException;
 
-final class UnknownGameException extends Exception
+final class UnknownGameException extends QVGDSException
 {
+    public function __construct()
+    {
+        parent::__construct(code: 404);
+    }
 
 }
