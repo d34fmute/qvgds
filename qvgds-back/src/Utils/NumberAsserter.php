@@ -11,8 +11,8 @@ final class NumberAsserter
 
     public function isEqualOrGreaterThan(int $min): void
     {
-        if ($this->value < $min){
-            throw new InvalidNumberArgumentException("$this->field must be equal or greater than $min");
+        if ($this->value < $min) {
+            throw new InvalidNumberArgumentException($this->field, $min);
         }
     }
 

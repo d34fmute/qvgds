@@ -7,5 +7,12 @@ use QVGDS\Exception\QVGDSException;
 
 final class MissingMandatoryValueException extends QVGDSException
 {
-
+    public function __construct(string $field)
+    {
+        parent::__construct(
+            QVGDSException::builder()
+                ->badRequest()
+                ->withMessage("$field cannot be empty")
+        );
+    }
 }

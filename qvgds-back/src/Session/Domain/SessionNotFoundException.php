@@ -9,7 +9,10 @@ final class SessionNotFoundException extends QVGDSException
 {
     public function __construct()
     {
-        parent::__construct(code: 404);
+        parent::__construct(
+            QVGDSException::builder()
+                ->notFound()
+                ->withMessage("Session not found")
+        );
     }
-
 }

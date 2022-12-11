@@ -9,11 +9,16 @@ final class InvalidShitCoinsException extends QVGDSException
 {
     public static function invalidAmount(int $amount): self
     {
-        return new self("Invalid amount: $amount");
+        return new self(QVGDSException::builder()
+            ->badRequest()
+            ->withMessage("Invalid amount: $amount"));
     }
 
     public static function invalidLevel(int $level): self
     {
-        return new self("Invalid level: $level");
+        return new self(QVGDSException::builder()
+            ->badRequest()
+            ->withMessage("Invalid level: $level")
+        );
     }
 }

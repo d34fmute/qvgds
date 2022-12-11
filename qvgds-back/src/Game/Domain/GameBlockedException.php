@@ -9,7 +9,11 @@ final class GameBlockedException extends QVGDSException
 {
     public function __construct(string $message)
     {
-        parent::__construct("Game $message");
+        parent::__construct(
+            QVGDSException::builder()
+                ->badRequest()
+                ->withMessage("Game $message")
+        );
     }
 
 }

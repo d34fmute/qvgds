@@ -5,11 +5,15 @@ namespace QVGDS\Exception;
 
 use Exception;
 
-abstract class QVGDSException extends Exception
+class QVGDSException extends Exception
 {
-    public function __construct(string $message = "", int $code = 400)
+    public function __construct(QVGDSExceptionBuilder $builder)
     {
-        parent::__construct($message, $code);
+        parent::__construct($builder->message, $builder->code);
     }
 
+    public static function builder(): QVGDSExceptionBuilder
+    {
+        return new QVGDSExceptionBuilder();
+    }
 }

@@ -9,7 +9,11 @@ final class JokerNotAvailableException extends QVGDSException
 {
     public function __construct(string $message)
     {
-        parent::__construct($message, 400);
+        parent::__construct(
+            QVGDSException::builder()
+                ->badRequest()
+                ->withMessage($message)
+        );
     }
 
 }
