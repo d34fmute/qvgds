@@ -17,6 +17,41 @@ import { useQuery } from "@tanstack/vue-query";
 import { computed } from "@vue/reactivity";
 import type { TQuestion } from "@/types/TQuestion";
 import ChatJoker from "@/components/ChatJoker.vue";
+import router from "@/router";
+import confetti from "canvas-confetti";
+
+const launchConfetti = () => {
+  var duration = 15 * 1000;
+  var animationEnd = Date.now() + duration;
+  var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+  function randomInRange(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
+
+  var interval: any = setInterval(function () {
+    var timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    var particleCount = 50 * (timeLeft / duration);
+    // since particles fall down, start a bit higher than random
+    confetti(
+      Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+      })
+    );
+    confetti(
+      Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+      })
+    );
+  }, 250);
+};
 
 type Choice = "a" | "b" | "c" | "d";
 
@@ -48,7 +83,7 @@ const {
 });
 
 const sceneTwoCams = ref(true);
-const level = ref(1);
+const level = ref(14);
 const gameOver = ref(false);
 const currentChoice = ref<Choice | undefined>();
 const choiceValidated = ref<boolean>(false);
@@ -66,7 +101,7 @@ const choiceButtons = reactive<ChoiceButtons>({
 
 const currentQuestion = computed(() => {
   return questions.value?.find(
-    (question) => question.fields.level === `${level.value}`
+    (question) => question.fields.level === `${level.value + 1}`
   );
 });
 
@@ -138,8 +173,25 @@ const handleChoice = (choice: Choice) => {
   currentChoice.value = choice;
 };
 
+const getResolvedLevel = (level: number) => {
+  if (level < 5) {
+    return 0;
+  }
+  if (level < 10) {
+    return 5;
+  }
+  if (level < 15) {
+    return 10;
+  }
+  return 15;
+};
+
 const handleResolution = () => {
   if (currentQuestion.value?.fields.answer !== currentChoice.value) {
+    gameOver.value = true;
+  } else if (level.value === 14) {
+    launchConfetti();
+    level.value++;
     gameOver.value = true;
   }
   choiceValidated.value = true;
@@ -156,6 +208,26 @@ const handleNextQuestion = () => {
 
 const handleCloseChatJoker = () => {
   isChatJokerEnable.value = false;
+};
+
+const handleLeaveGame = () => {
+  router.push({
+    name: "gameover",
+    params: {
+      level: getResolvedLevel(level.value),
+      username: route.params.username
+    }
+  });
+};
+
+const handleLeaveGameWithMoney = () => {
+  router.push({
+    name: "gameover",
+    params: {
+      level: level.value,
+      username: route.params.username
+    }
+  });
 };
 </script>
 
@@ -304,9 +376,11 @@ const handleCloseChatJoker = () => {
         </div>
         <div class="mt-8 flex justify-center">
           <div v-if="gameOver">
-            <strong>PERDU !</strong>
+            <PrimaryButton v-if="choiceValidated" @click="handleLeaveGame"
+              >Récupérer ses gains</PrimaryButton
+            >
           </div>
-          <div v-else>
+          <div v-else class="flex flex-col items-center gap-10">
             <PrimaryButton
               v-if="!choiceValidated"
               :disabled="currentChoice === undefined"
@@ -316,10 +390,19 @@ const handleCloseChatJoker = () => {
             <PrimaryButton v-if="choiceValidated" @click="handleNextQuestion"
               >Question suivante</PrimaryButton
             >
+            <div>
+              <PrimaryButton @click="handleLeaveGameWithMoney"
+                >Prendre l'argent !</PrimaryButton
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <ChatJoker v-if="isChatJokerEnable" @close="handleCloseChatJoker" />
+    <ChatJoker
+      v-if="isChatJokerEnable"
+      @close="handleCloseChatJoker"
+      :question="currentQuestion?.fields.title"
+    />
   </main>
 </template>

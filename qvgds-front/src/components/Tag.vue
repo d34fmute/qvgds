@@ -14,7 +14,7 @@ const props = withDefaults(defineProps<Props>(), {
     :class="[
       props.class,
       'rounded-xl bg-primary py-3 px-6 font-bold',
-      'flex items-center justify-center'
+      'flex items-center justify-center uppercase'
     ]"
     >{{ props.label }}</span
   >

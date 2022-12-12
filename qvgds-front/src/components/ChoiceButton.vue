@@ -70,7 +70,7 @@ const colorClasses = computed<{
       colorClasses.buttonClasses,
       'flex w-full items-center justify-center gap-2 rounded-2xl py-3 px-3',
       'disabled:cursor-not-allowed',
-      'font-bold text-white'
+      'font-medium text-white'
     ]"
     :type="props.type"
     @click="emit('click')"
@@ -83,6 +83,6 @@ const colorClasses = computed<{
       ]"
       >{{ option }}</span
     >
-    <span class="flex-grow">{{ label }}</span>
+    <span class="flex-grow text-3xl tracking-[0.1em]">{{ label }}</span>
   </button>
 </template>
