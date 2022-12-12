@@ -5,8 +5,8 @@ namespace QVGDS\Exception;
 
 final class QVGDSExceptionBuilder
 {
-    public readonly int $code;
-    public readonly string $message;
+    public int $code;
+    public string $message;
 
     public function withMessage(string $message): self
     {

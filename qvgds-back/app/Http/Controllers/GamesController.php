@@ -49,6 +49,7 @@ final class GamesController
             "id" => $game->id()->get(),
             "player" => $game->player(),
             "step" => $game->step(),
+            "shitcoins" => $game->shitCoins()->amount(),
             "status" => $game->status(),
             "jokers" => [$this->serializeJokers($game)]
         ];
@@ -142,6 +143,13 @@ final class GamesController
             "type" => $joker->type(),
             "status" => $joker->status()
         ];
+    }
+
+    public function forgive(string $gameId): Response
+    {
+        $game = $this->games->forgive(new GameId(Uuid::fromString($gameId)));
+
+        return new JsonResponse($this->serialize($game));
     }
 
     private function serializeJokers(Game $game): array
