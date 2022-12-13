@@ -83,7 +83,7 @@ const {
 });
 
 const sceneTwoCams = ref(true);
-const level = ref(14);
+const level = ref(0);
 const gameOver = ref(false);
 const currentChoice = ref<Choice | undefined>();
 const choiceValidated = ref<boolean>(false);
