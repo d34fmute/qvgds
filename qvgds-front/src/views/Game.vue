@@ -7,13 +7,66 @@ import JokerButton, { type JokerState } from "@/components/JokerButton.vue";
 import ChoiceButton, {
   type ButtonVariant
 } from "@/components/ChoiceButton.vue";
-import { reactive, ref } from "vue";
+import type { ComputedRef } from "vue";
+import { reactive, ref, watch } from "vue";
 import Frame from "@/components/Frame.vue";
 import SwitchSceneIcon from "@/components/icons/SwitchSceneIcon.vue";
 import { useRoute } from "vue-router";
 import { getQuestionsBySessionId } from "@/airtable/questions";
 import { useQuery } from "@tanstack/vue-query";
 import { computed } from "@vue/reactivity";
+import type { TQuestion } from "@/types/TQuestion";
+import ChatJoker from "@/components/ChatJoker.vue";
+import router from "@/router";
+import confetti from "canvas-confetti";
+
+const launchConfetti = () => {
+  var duration = 15 * 1000;
+  var animationEnd = Date.now() + duration;
+  var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+  function randomInRange(min: number, max: number) {
+    return Math.random() * (max - min) + min;
+  }
+
+  var interval: any = setInterval(function () {
+    var timeLeft = animationEnd - Date.now();
+
+    if (timeLeft <= 0) {
+      return clearInterval(interval);
+    }
+
+    var particleCount = 50 * (timeLeft / duration);
+    // since particles fall down, start a bit higher than random
+    confetti(
+      Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+      })
+    );
+    confetti(
+      Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+      })
+    );
+  }, 250);
+};
+
+type Choice = "a" | "b" | "c" | "d";
+
+interface ChoiceButton {
+  variant?: ButtonVariant;
+  label: string;
+  option: string;
+}
+
+interface ChoiceButtons {
+  a: ChoiceButton;
+  b: ChoiceButton;
+  c: ChoiceButton;
+  d: ChoiceButton;
+}
 
 const route = useRoute();
 
@@ -30,46 +83,71 @@ const {
 });
 
 const sceneTwoCams = ref(true);
-
-const level = ref(1);
-
+const level = ref(0);
 const gameOver = ref(false);
+const currentChoice = ref<Choice | undefined>();
+const choiceValidated = ref<boolean>(false);
+const isFiftyEnable = ref<boolean>(false);
+const isBadChoiceSkiped = ref<boolean>(false);
+const answersRemoved = ref<string[]>([]);
+const isChatJokerEnable = ref<boolean>(false);
+
+const choiceButtons = reactive<ChoiceButtons>({
+  a: { label: "", option: "A" },
+  b: { label: "", option: "B" },
+  c: { label: "", option: "C" },
+  d: { label: "", option: "D" }
+});
 
 const currentQuestion = computed(() => {
   return questions.value?.find(
-    (question) => question.fields.level === `${level.value}`
+    (question) => question.fields.level === `${level.value + 1}`
   );
+});
+
+watch(currentQuestion, (newValue, oldValue) => {
+  const question = newValue;
+  for (const l in choiceButtons) {
+    const c = l as Choice;
+    choiceButtons[c].label = question?.fields[c] || "";
+  }
 });
 
 interface Joker {
   state: JokerState;
 }
 const jokers = reactive<{ fifty: Joker; chat: Joker; friend: Joker }>({
-  fifty: { state: "used" },
+  fifty: { state: "default" },
   chat: { state: "default" },
   friend: { state: "default" }
 });
 
 const handleJokerClick = (joker: "fifty" | "chat" | "friend") => {
   const currentJoker = jokers[joker];
-  const state = currentJoker.state;
-  if (state === "active") {
-    currentJoker.state = "used";
+  if (joker === "fifty") {
+    isFiftyEnable.value = true;
   }
-  if (state === "used") {
-    currentJoker.state = "default";
+  if (joker === "chat") {
+    isChatJokerEnable.value = true;
   }
-  if (state === "default") {
-    currentJoker.state = "active";
-  }
+  currentJoker.state = "used";
 };
 
-type Choice = "a" | "b" | "c" | "d";
-
-const currentChoice = ref<Choice | undefined>();
-const choiceValidated = ref<boolean>(false);
-
 const getButtonVariant = (choice: Choice): ButtonVariant | undefined => {
+  if (isFiftyEnable.value) {
+    if (currentQuestion.value?.fields.answer !== choice) {
+      if (
+        ((isBadChoiceSkiped.value || Math.random() < 0.5) &&
+          answersRemoved.value.length < 2) ||
+        answersRemoved.value.includes(choice)
+      ) {
+        answersRemoved.value.push(choice);
+        return "disabled";
+      } else {
+        isBadChoiceSkiped.value = true;
+      }
+    }
+  }
   if (currentChoice.value === undefined) {
     return;
   }
@@ -87,7 +165,6 @@ const getButtonVariant = (choice: Choice): ButtonVariant | undefined => {
     return "invalid";
   }
   if (currentChoice.value === choice) {
-    console.log("currentChoice.value", currentChoice.value);
     return "selected";
   }
 };
@@ -96,13 +173,25 @@ const handleChoice = (choice: Choice) => {
   currentChoice.value = choice;
 };
 
+const getResolvedLevel = (level: number) => {
+  if (level < 5) {
+    return 0;
+  }
+  if (level < 10) {
+    return 5;
+  }
+  if (level < 15) {
+    return 10;
+  }
+  return 15;
+};
+
 const handleResolution = () => {
-  console.log(
-    "currentQuestion.value?.fields.answer",
-    currentQuestion.value?.fields.answer
-  );
-  console.log("currentChoice.value", currentChoice.value);
   if (currentQuestion.value?.fields.answer !== currentChoice.value) {
+    gameOver.value = true;
+  } else if (level.value === 14) {
+    launchConfetti();
+    level.value++;
     gameOver.value = true;
   }
   choiceValidated.value = true;
@@ -112,6 +201,33 @@ const handleNextQuestion = () => {
   level.value++;
   choiceValidated.value = false;
   currentChoice.value = undefined;
+  isFiftyEnable.value = false;
+  isBadChoiceSkiped.value = false;
+  answersRemoved.value = [];
+};
+
+const handleCloseChatJoker = () => {
+  isChatJokerEnable.value = false;
+};
+
+const handleLeaveGame = () => {
+  router.push({
+    name: "gameover",
+    params: {
+      level: getResolvedLevel(level.value),
+      username: route.params.username
+    }
+  });
+};
+
+const handleLeaveGameWithMoney = () => {
+  router.push({
+    name: "gameover",
+    params: {
+      level: level.value,
+      username: route.params.username
+    }
+  });
 };
 </script>
 
@@ -235,7 +351,7 @@ const handleNextQuestion = () => {
         <div class="grid w-full grid-cols-2 gap-4" v-if="currentQuestion">
           <ChoiceButton
             option="A"
-            :label="currentQuestion.fields.a"
+            :label="choiceButtons.a.label"
             :variant="getButtonVariant('a')"
             @click="handleChoice('a')"
           />
@@ -260,9 +376,11 @@ const handleNextQuestion = () => {
         </div>
         <div class="mt-8 flex justify-center">
           <div v-if="gameOver">
-            <strong>PERDU !</strong>
+            <PrimaryButton v-if="choiceValidated" @click="handleLeaveGame"
+              >Récupérer ses gains</PrimaryButton
+            >
           </div>
-          <div v-else>
+          <div v-else class="flex flex-col items-center gap-10">
             <PrimaryButton
               v-if="!choiceValidated"
               :disabled="currentChoice === undefined"
@@ -272,9 +390,19 @@ const handleNextQuestion = () => {
             <PrimaryButton v-if="choiceValidated" @click="handleNextQuestion"
               >Question suivante</PrimaryButton
             >
+            <div>
+              <PrimaryButton @click="handleLeaveGameWithMoney"
+                >Prendre l'argent !</PrimaryButton
+              >
+            </div>
           </div>
         </div>
       </div>
     </div>
+    <ChatJoker
+      v-if="isChatJokerEnable"
+      @close="handleCloseChatJoker"
+      :question="currentQuestion?.fields.title"
+    />
   </main>
 </template>
