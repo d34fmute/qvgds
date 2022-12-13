@@ -4,9 +4,9 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use QVGDS\Game\Domain\Fail;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
-use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Service\GamesManager;
@@ -85,16 +85,19 @@ final class GamesController
     {
         $answer = $request->json()->get("answer");
 
-        $game = $this->games->guess(new GameId(Uuid::fromString($gameId)), new Answer($answer));
+        $gameOrFail = $this->games->guess(new GameId(Uuid::fromString($gameId)), new Answer($answer));
 
-        return new JsonResponse(
-            [
-                "shitcoins" => $game->shitCoins()->amount(),
-                "goodAnswer" => $game->currentQuestion()->goodAnswer()->text,
-                "gameStatus" => $game->status()->value
-            ],
-            $game->status() === GameStatus::LOST ? Response::HTTP_BAD_REQUEST : Response::HTTP_OK
-        );
+        if ($gameOrFail instanceof Fail) {
+            return new JsonResponse(
+                [
+                    "shitcoins" => $gameOrFail->game->shitCoins()->amount(),
+                    "goodAnswer" => $gameOrFail->game->currentQuestion()->goodAnswer()->text,
+                    "gameStatus" => $gameOrFail->game->status()->value
+                ],
+                Response::HTTP_BAD_REQUEST
+            );
+        }
+        return $this->currentQuestion($gameId);
     }
 
     public function fiftyFifty(string $gameId): Response

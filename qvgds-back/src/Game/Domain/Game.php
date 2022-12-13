@@ -35,17 +35,18 @@ final class Game
         return $this->jokers;
     }
 
-    public function guess(Answer $answer): bool
+    public function guess(Answer $answer): self|Fail
     {
         $this->assertGameStatus();
-        $isGuessed = $this->session->guess(1, $answer);
+        $isGuessed = $this->session->guess($this->step, $answer);
         if ($isGuessed) {
             $this->step += 1;
         } else {
             $this->status = GameStatus::LOST;
+            return new Fail($this);
         }
 
-        return $isGuessed;
+        return $this;
     }
 
     public function shitCoins(): ShitCoins

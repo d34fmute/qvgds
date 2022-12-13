@@ -30,7 +30,7 @@ final class Question
 
     public function guess(Answer $guess): bool
     {
-        return $this->goodAnswer->text == $guess;
+        return $this->goodAnswer->get() == $guess;
     }
 
     public function id(): QuestionId

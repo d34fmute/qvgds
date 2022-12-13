@@ -85,7 +85,7 @@ final class GamesManagerTest extends TestCase
     /**
      * @test
      */
-    public function shouldAnswerFistQuestion(): void
+    public function shouldAnswerFirstQuestion(): void
     {
         $this->prepareGame();
 

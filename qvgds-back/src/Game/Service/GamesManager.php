@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Service;
 
+use QVGDS\Game\Domain\Fail;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GamesRepository;
@@ -42,7 +43,7 @@ final class GamesManager
         return $game;
     }
 
-    public function guess(GameId $id, Answer $answer): Game
+    public function guess(GameId $id, Answer $answer): Game|Fail
     {
         $game = $this->get($id);
 
@@ -50,7 +51,7 @@ final class GamesManager
 
         $this->games->save($game);
 
-        return $game;
+        return $guess;
     }
 
     public function currentQuestion(GameId $gameId): Question

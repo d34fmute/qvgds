@@ -57,9 +57,9 @@ final class GameTest extends TestCase
     {
         $game = GameFixtures::newGame();
 
-        $game->guess(new Answer("You loose"));
+        $fail = $game->guess(new Answer("You loose"));
 
-        self::assertEquals(GameStatus::LOST, $game->status());
+        self::assertEquals(GameStatus::LOST, $fail->game->status());
     }
 
     /**
