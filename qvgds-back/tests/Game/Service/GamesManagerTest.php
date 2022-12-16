@@ -109,6 +109,22 @@ final class GamesManagerTest extends TestCase
         self::assertEquals(new Jokers(new FiftyFifty(JokerStatus::ALREADY_USED), new CallAFriend(JokerStatus::AVAILABLE), new AudienceHelp(JokerStatus::AVAILABLE)), $game->jokers());
     }
 
+    /**
+     * @test
+     */
+    public function shouldForgiveAGame(): void
+    {
+        $this->prepareGame();
+        $this->service->forgive(GameFixtures::gameId());
+
+        $game = $this->service->get(GameFixtures::gameId());
+
+        $forgivenGame = GameFixtures::newGame();
+        $forgivenGame->forgive();
+
+        self::assertEquals($forgivenGame, $game);
+    }
+
     private function prepareGame(): void
     {
         $this->sessions->save(SessionFixtures::sessionWithQuestions());

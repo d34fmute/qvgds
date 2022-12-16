@@ -79,4 +79,13 @@ final class GamesManager
 
         return $answers;
     }
+
+    public function forgive(GameId $id): Game
+    {
+        $game = $this->get($id);
+        $game->forgive();
+        $this->games->save($game);
+
+        return $game;
+    }
 }

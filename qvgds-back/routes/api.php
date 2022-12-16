@@ -36,6 +36,7 @@ Route::get("/games/{id}", [GamesController::class, "get"]);
 Route::get("/games/{id}/current-question", [GamesController::class, "currentQuestion"]);
 Route::get("/games/{id}/jokers", [GamesController::class, "jokers"]);
 Route::get("/games/{id}/fifty-fifty", [GamesController::class, "fiftyFifty"]);
+Route::delete("/games/{id}", [GamesController::class, "forgive"]);
 
 /*
 {
