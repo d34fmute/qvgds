@@ -33,7 +33,7 @@ final class JokersTest extends TestCase
         $jokers = new Jokers(new CallAFriend(JokerStatus::AVAILABLE));
         $jokers->use(JokerType::CALL_A_FRIEND);
 
-        self::assertEquals([JokerType::CALL_A_FRIEND->value => new CallAFriend(JokerStatus::ALREADY_USED)], $jokers->all());
+        self::assertContainsEquals(new CallAFriend(JokerStatus::ALREADY_USED), $jokers->all());
     }
 
     /**

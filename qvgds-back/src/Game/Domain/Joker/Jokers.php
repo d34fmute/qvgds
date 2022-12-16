@@ -28,7 +28,7 @@ final class Jokers
      */
     public function all(): array
     {
-        return $this->jokers;
+        return array_values($this->jokers);
     }
 
     /**
