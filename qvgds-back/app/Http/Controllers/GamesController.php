@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\DTO\RestGame;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 use QVGDS\Game\Domain\Fail;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
@@ -16,11 +18,21 @@ use QVGDS\Session\Domain\SessionId;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 final class GamesController
 {
+    private readonly Serializer $serializer;
+
     public function __construct(private readonly GamesManager $games)
     {
+
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new PropertyNormalizer()];
+
+        $this->serializer = new Serializer($normalizers, $encoders);
     }
 
     public function start(Request $request): Response
@@ -33,11 +45,24 @@ final class GamesController
         return new JsonResponse($this->serialize($game));
     }
 
-    public function get(string $gameId): Response
+    #[OA\Get(
+        path: "/api/games/{gameId}",
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Game summary",
+                content: new OA\MediaType(
+                    mediaType: "application/json",
+                    schema: new OA\Schema(type: RestGame::class))),
+        ])]
+    public function get(
+        #[OA\PathParameter(schema: new OA\Schema(type: "uuid"))]
+        string $gameId
+    ): Response
     {
-        $game = $this->getGame($gameId);
-
-        return new JsonResponse($this->serialize($game));
+        return new JsonResponse(
+            $this->serializer->normalize(RestGame::from($this->getGame($gameId)))
+        );
     }
 
     /**
