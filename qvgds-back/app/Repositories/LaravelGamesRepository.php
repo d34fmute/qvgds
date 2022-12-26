@@ -82,7 +82,7 @@ final class LaravelGamesRepository implements GamesRepository
             $laravelGame->player,
             new Jokers(...$laravelGame->jokers()->get()->map(fn(LaravelJoker $joker) => $this->buildJoker($joker))->toArray()),
             $laravelGame->session()->get()->map(fn(LaravelSession $session): Session => LaravelSessionsRepository::toDomain($session))->first(),
-            GameStatus::from($laravelGame->status),
+            $this->buildGameStatus($laravelGame->status),
             $laravelGame->step
         );
     }
@@ -101,6 +101,15 @@ final class LaravelGamesRepository implements GamesRepository
         return match ($status) {
             JokerStatus::AVAILABLE->name => JokerStatus::AVAILABLE,
             JokerStatus::ALREADY_USED->name => JokerStatus::ALREADY_USED,
+        };
+    }
+
+    private function buildGameStatus(string $status): GameStatus
+    {
+        return match ($status) {
+            GameStatus::IN_PROGRESS->name => GameStatus::IN_PROGRESS,
+            GameStatus::LOST->name => GameStatus::LOST,
+            GameStatus::FORGIVEN->name => GameStatus::FORGIVEN,
         };
     }
 }

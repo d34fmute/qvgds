@@ -100,7 +100,7 @@ final readonly class GamesController
     {
         $games = $this->games->list();
         $json = array_map(
-            fn(Game $game): array => $this->serializeWithQuestions($game),
+            fn(Game $game): array => $this->serializer->normalize(RestGame::from($game)),
             $games
         );
         return new JsonResponse($json);
@@ -133,7 +133,7 @@ final readonly class GamesController
                 [
                     "shitcoins" => $gameOrFail->game->shitCoins()->amount(),
                     "goodAnswer" => $gameOrFail->game->currentQuestion()->goodAnswer()->text,
-                    "gameStatus" => $gameOrFail->game->status()->value
+                    "gameStatus" => $gameOrFail->game->status()->name
                 ],
                 Response::HTTP_BAD_REQUEST
             );
@@ -147,25 +147,6 @@ final readonly class GamesController
 
         $json = array_map(fn(Answer $a): string => $a->text, $answers);
         return new JsonResponse(["badAnswers" => $json]);
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function serializeWithQuestions(Game $game): array
-    {
-        return [
-            "id" => $game->id()->get(),
-            "player" => $game->player(),
-            "step" => $game->step(),
-            "status" => $game->status(),
-            "questions" => [
-                array_map(
-                    fn(Question $q): array => ["question" => $q->text(), "answers" => $this->serializeAnswers($q)],
-                    $game->session()->questions()
-                )
-            ]
-        ];
     }
 
     public function jokers(string $gameId): Response
@@ -194,5 +175,4 @@ final readonly class GamesController
 
         return array_map(fn(Answer $a): array => ["answer" => $a->text], $answers);
     }
-
 }
