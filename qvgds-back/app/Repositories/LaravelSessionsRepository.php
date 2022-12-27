@@ -45,7 +45,7 @@ final class LaravelSessionsRepository implements SessionsRepository
     }
 
     /**
-     * @inheritDoc
+     * @return Session[]
      */
     public function list(): array
     {
@@ -76,7 +76,7 @@ final class LaravelSessionsRepository implements SessionsRepository
         );
     }
 
-    private function toLaravelQuestion(Question $question, SessionId $sessionId)
+    private function toLaravelQuestion(Question $question, SessionId $sessionId): void
     {
         LaravelQuestion::upsert(
             [
@@ -105,7 +105,7 @@ final class LaravelSessionsRepository implements SessionsRepository
     /**
      * @param Question[] $questions
      */
-    private function upsertQuestions(array $questions, SessionId $sessionId)
+    private function upsertQuestions(array $questions, SessionId $sessionId): void
     {
         array_walk($questions, fn(Question $question) => $this->toLaravelQuestion($question, $sessionId));
     }

@@ -4,46 +4,39 @@ declare(strict_types=1);
 namespace App\Http\Controllers\DTO;
 
 use OpenApi\Attributes as OA;
-use OpenApi\Attributes\Property;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameStatus;
-use QVGDS\Game\Domain\Joker\Joker;
 
 #[OA\Schema(
     title: "Game",
     description: "Game representation"
 )]
-final class RestGame
+final readonly class RestGame
 {
-    /**
-     * @var RestJoker[]
-     */
-    #[Property]
-    public readonly array $jokers;
 
     /**
      * @param RestJoker[] $jokers
      */
     private function __construct(
-        #[Property]
-        public readonly string     $id,
+        #[OA\Property]
+        public string     $id,
 
-        #[Property]
-        public readonly string     $player,
+        #[OA\Property]
+        public string     $player,
 
-        #[Property]
-        public readonly int        $step,
+        #[OA\Property]
+        public int        $step,
 
-        #[Property]
-        public readonly int        $shitcoins,
+        #[OA\Property]
+        public int        $shitcoins,
 
-        #[Property]
-        public readonly GameStatus $status,
+        #[OA\Property]
+        public GameStatus $status,
 
-        array                      $jokers
+        #[OA\Property(items: new OA\Items(type: RestJoker::class))]
+        public array      $jokers
     )
     {
-        $this->jokers = $jokers;
     }
 
     public static function from(Game $game): self
@@ -54,15 +47,7 @@ final class RestGame
             $game->step(),
             $game->shitCoins()->amount(),
             $game->status(),
-            self::serializeJokers($game)
-        );
-    }
-
-    private static function serializeJokers(Game $game): array
-    {
-        return array_map(
-            fn(Joker $joker): RestJoker => RestJoker::from($joker),
-            $game->jokers()->all()
+            RestJoker::fromGame($game)
         );
     }
 }

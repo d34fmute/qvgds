@@ -6,9 +6,9 @@ namespace QVGDS\Game\Domain\Joker;
 use OpenApi\Attributes\Schema;
 
 #[Schema(title: "Joker type")]
-enum JokerType: string
+enum JokerType
 {
-    case FIFTY_FIFTY = "FIFTY_FIFTY";
-    case CALL_A_FRIEND = "CALL_A_FRIEND";
-    case AUDIENCE_HELP = "AUDIENCE_HELP";
+    case FIFTY_FIFTY;
+    case CALL_A_FRIEND;
+    case AUDIENCE_HELP;
 }

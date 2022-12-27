@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\JsonResponse;
 use QVGDS\Exception\QVGDSException;
+use Symfony\Component\Serializer\Exception\MissingConstructorArgumentsException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,10 +43,13 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->renderable(function (QVGDSException $e) {
             return new JsonResponse(["error" => $e->getMessage()], $e->getCode());
+        });
+        $this->renderable(function (MissingConstructorArgumentsException $e) {
+            return new JsonResponse(["error" => "Missing argument: {$e->getMissingConstructorArguments()[0]}"], 400);
         });
     }
 }
