@@ -129,7 +129,7 @@ final class GamesController
         $game = $this->getGame($gameId);
         $jokers = $this->serializeJokers($game);
 
-        return new JsonResponse([$jokers]);
+        return new JsonResponse($jokers);
     }
 
     private function getGame(string $gameId): Game
