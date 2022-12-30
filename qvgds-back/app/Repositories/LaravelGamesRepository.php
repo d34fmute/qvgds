@@ -51,15 +51,15 @@ final class LaravelGamesRepository implements GamesRepository
     /**
      * @param Joker[] $jokers
      */
-    private function upsertJokers(array $jokers, GameId $gameId)
+    private function upsertJokers(array $jokers, GameId $gameId): void
     {
         array_walk(
             $jokers,
             fn(Joker $joker) => LaravelJoker::upsert(
                 [
                     "game" => $gameId->get(),
-                    "type" => $joker->type(),
-                    "status" => $joker->status(),
+                    "type" => $joker->type()->name,
+                    "status" => $joker->status()->name,
                 ],
                 ["game"],
                 ["type", "status"]
@@ -68,7 +68,7 @@ final class LaravelGamesRepository implements GamesRepository
     }
 
     /**
-     * @inheritdoc
+     * @return Game[]
      */
     public function list(): array
     {
@@ -90,9 +90,17 @@ final class LaravelGamesRepository implements GamesRepository
     private function buildJoker(LaravelJoker $joker): Joker
     {
         return match ($joker->type) {
-            JokerType::FIFTY_FIFTY->name => new FiftyFifty(JokerStatus::from($joker->status)),
-            JokerType::AUDIENCE_HELP->name => new AudienceHelp(JokerStatus::from($joker->status)),
-            JokerType::CALL_A_FRIEND->name => new CallAFriend(JokerStatus::from($joker->status)),
+            JokerType::FIFTY_FIFTY->name => new FiftyFifty($this->match($joker->status)),
+            JokerType::AUDIENCE_HELP->name => new AudienceHelp($this->match($joker->status)),
+            JokerType::CALL_A_FRIEND->name => new CallAFriend($this->match($joker->status)),
+        };
+    }
+
+    private function match(string $status): JokerStatus
+    {
+        return match ($status) {
+            JokerStatus::AVAILABLE->name => JokerStatus::AVAILABLE,
+            JokerStatus::ALREADY_USED->name => JokerStatus::ALREADY_USED,
         };
     }
 }

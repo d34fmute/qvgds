@@ -3,11 +3,15 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Attributes\BadRequest;
+use App\Http\Controllers\DTO\RestGame;
+use App\Http\Controllers\DTO\RestJoker;
+use App\Http\Controllers\DTO\RestStartGame;
 use Illuminate\Http\Request;
+use OpenApi\Attributes as OA;
 use QVGDS\Game\Domain\Fail;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
-use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
@@ -16,43 +20,80 @@ use QVGDS\Session\Domain\SessionId;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\Serializer\Normalizer\PropertyNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
-final class GamesController
+final readonly class GamesController
 {
-    public function __construct(private readonly GamesManager $games)
+    private Serializer $serializer;
+
+    public function __construct(private GamesManager $games)
     {
+        $encoders = [new JsonEncoder()];
+        $normalizers = [new GetSetMethodNormalizer(), new PropertyNormalizer()];
+
+        $this->serializer = new Serializer($normalizers, $encoders);
     }
 
+    #[OA\Post(
+        path: "/api/games",
+        description: "Start a game",
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(type: RestStartGame::class)
+        ),
+        tags: ["Games"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Game summary",
+                content: new OA\JsonContent(type: RestGame::class)
+            ),
+            new BadRequest()
+        ]
+    )]
     public function start(Request $request): Response
     {
-        $session = $request->json()->get("session");
-        $player = $request->json()->get("player");
+        /** @var RestStartGame $restStartGame */
+        $restStartGame = $this->serializer->deserialize($request->getContent(), RestStartGame::class, "json");
 
-        $game = $this->games->start(GameId::newId(), new SessionId(Uuid::fromString($session)), $player);
+        $game = $this->games->start(
+            GameId::newId(),
+            new SessionId(Uuid::fromString($restStartGame->session)),
+            $restStartGame->player
+        );
 
-        return new JsonResponse($this->serialize($game));
+        return new JsonResponse(
+            $this->serializer->normalize(RestGame::from($game))
+        );
     }
 
-    public function get(string $gameId): Response
+    #[OA\Get(
+        path: "/api/games/{gameId}",
+        description: "Game details",
+        tags: ["Games"],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: "Game summary",
+                content: new OA\JsonContent(type: RestGame::class)
+            ),
+            new OA\Response(
+                response: 404,
+                description: "Game not found"
+            )
+        ]
+    )]
+    public function get(
+        #[OA\PathParameter(schema: new OA\Schema(type: "uuid"))]
+        string $gameId
+    ): Response
     {
-        $game = $this->getGame($gameId);
-
-        return new JsonResponse($this->serialize($game));
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function serialize(Game $game): array
-    {
-        return [
-            "id" => $game->id()->get(),
-            "player" => $game->player(),
-            "step" => $game->step(),
-            "shitcoins" => $game->shitCoins()->amount(),
-            "status" => $game->status(),
-            "jokers" => [$this->serializeJokers($game)]
-        ];
+        return new JsonResponse(
+            $this->serializer->normalize(RestGame::from($this->getGame($gameId)))
+        );
     }
 
     public function list(): Response
@@ -130,9 +171,8 @@ final class GamesController
     public function jokers(string $gameId): Response
     {
         $game = $this->getGame($gameId);
-        $jokers = $this->serializeJokers($game);
 
-        return new JsonResponse($jokers);
+        return new JsonResponse($this->serializer->normalize(RestJoker::fromGame($game)));
     }
 
     private function getGame(string $gameId): Game
@@ -140,27 +180,11 @@ final class GamesController
         return $this->games->get(new GameId(Uuid::fromString($gameId)));
     }
 
-    private function serializeJoker(): \Closure
-    {
-        return fn(Joker $joker): array => [
-            "type" => $joker->type(),
-            "status" => $joker->status()
-        ];
-    }
-
     public function forgive(string $gameId): Response
     {
         $game = $this->games->forgive(new GameId(Uuid::fromString($gameId)));
 
-        return new JsonResponse($this->serialize($game));
-    }
-
-    private function serializeJokers(Game $game): array
-    {
-        return array_map(
-            $this->serializeJoker(),
-            $game->jokers()->all()
-        );
+        return new JsonResponse($this->serializer->normalize(RestGame::from($game)));
     }
 
     private function serializeAnswers(Question $question): array

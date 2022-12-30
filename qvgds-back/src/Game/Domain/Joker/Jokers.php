@@ -38,12 +38,12 @@ final class Jokers
     {
         if (empty($jokers)) {
             $this->jokers = [
-                JokerType::FIFTY_FIFTY->value => new FiftyFifty(JokerStatus::AVAILABLE),
-                JokerType::CALL_A_FRIEND->value => new CallAFriend(JokerStatus::AVAILABLE),
-                JokerType::AUDIENCE_HELP->value => new AudienceHelp(JokerStatus::AVAILABLE)
+                JokerType::FIFTY_FIFTY->name => new FiftyFifty(JokerStatus::AVAILABLE),
+                JokerType::CALL_A_FRIEND->name => new CallAFriend(JokerStatus::AVAILABLE),
+                JokerType::AUDIENCE_HELP->name => new AudienceHelp(JokerStatus::AVAILABLE)
             ];
         } else {
-            array_walk($jokers, fn(Joker $joker) => $this->jokers[$joker->type()->value] = $joker);
+            array_walk($jokers, fn(Joker $joker) => $this->jokers[$joker->type()->name] = $joker);
         }
     }
 }

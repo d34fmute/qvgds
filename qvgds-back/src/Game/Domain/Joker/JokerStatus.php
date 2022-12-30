@@ -3,9 +3,12 @@ declare(strict_types=1);
 
 namespace QVGDS\Game\Domain\Joker;
 
-enum JokerStatus: string
+use OpenApi\Attributes\Schema;
+
+#[Schema(title: "Joker status")]
+enum JokerStatus
 {
 
-    case AVAILABLE = "AVAILABLE";
-    case ALREADY_USED = "ALREADY_USED";
+    case AVAILABLE;
+    case ALREADY_USED;
 }
