@@ -16,7 +16,6 @@ use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Game\Service\GamesManager;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\Question;
-use QVGDS\Session\Domain\SessionId;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -59,11 +58,7 @@ final readonly class GamesController
         /** @var RestStartGame $restStartGame */
         $restStartGame = $this->serializer->deserialize($request->getContent(), RestStartGame::class, "json");
 
-        $game = $this->games->start(
-            GameId::newId(),
-            new SessionId(Uuid::fromString($restStartGame->session)),
-            $restStartGame->player
-        );
+        $game = $this->games->start($restStartGame->toDomain());
 
         return new JsonResponse(
             $this->serializer->normalize(RestGame::from($game))

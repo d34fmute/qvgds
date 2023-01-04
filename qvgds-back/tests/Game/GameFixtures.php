@@ -5,6 +5,7 @@ namespace QVGDS\Tests\Game;
 
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
+use QVGDS\Game\Domain\GameStart;
 use QVGDS\Tests\Session\SessionFixtures;
 use Ramsey\Uuid\Uuid;
 
@@ -23,5 +24,10 @@ final class GameFixtures
     public static function player(): string
     {
         return "Toto";
+    }
+
+    public static function gameStart(): GameStart
+    {
+        return new GameStart(self::gameId(), SessionFixtures::sessionId(), self::player());
     }
 }

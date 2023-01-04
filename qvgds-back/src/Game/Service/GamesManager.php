@@ -7,10 +7,10 @@ use QVGDS\Game\Domain\Fail;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GamesRepository;
+use QVGDS\Game\Domain\GameStart;
 use QVGDS\Game\Domain\UnknownGameException;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\Question;
-use QVGDS\Session\Domain\SessionId;
 use QVGDS\Session\Domain\SessionNotFoundException;
 use QVGDS\Session\Domain\SessionsRepository;
 
@@ -20,14 +20,14 @@ final class GamesManager
     {
     }
 
-    public function start(GameId $id, SessionId $sessionId, string $player): Game
+    public function start(GameStart $gameStart): Game
     {
-        $session = $this->sessions->get($sessionId);
+        $session = $this->sessions->get($gameStart->sessionId);
         if ($session === null) {
             throw new SessionNotFoundException();
         }
 
-        $game = Game::start($id, $player, $session);
+        $game = Game::start($gameStart->gameId, $gameStart->player, $session);
 
         $this->games->save($game);
 
