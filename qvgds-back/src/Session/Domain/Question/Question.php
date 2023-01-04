@@ -5,19 +5,19 @@ namespace QVGDS\Session\Domain\Question;
 
 use QVGDS\Utils\Assert;
 
-final class Question
+final readonly class Question
 {
-
     public function __construct(
-        private readonly QuestionId $id,
-        private readonly int        $step,
-        private readonly string     $text,
-        private readonly GoodAnswer $goodAnswer,
-        private readonly BadAnswers $badAnswers,
+        private QuestionId $id,
+        private int        $step,
+        private string     $text,
+        private GoodAnswer $goodAnswer,
+        private BadAnswers $badAnswers,
     )
     {
         Assert::notEmptyText("text", $text);
         Assert::numberValue("step", $step)->isEqualOrGreaterThan(1);
+        $this->assertGoodAnswerIsNotInBadAnswers($goodAnswer, $badAnswers);
     }
 
     /**
@@ -59,5 +59,12 @@ final class Question
     public function step(): int
     {
         return $this->step;
+    }
+
+    private function assertGoodAnswerIsNotInBadAnswers(GoodAnswer $goodAnswer, BadAnswers $badAnswers): void
+    {
+        if (in_array($goodAnswer->get(), $badAnswers->get())) {
+            throw new GoodAnswerIsAlsoInBadAnswersException();
+        }
     }
 }

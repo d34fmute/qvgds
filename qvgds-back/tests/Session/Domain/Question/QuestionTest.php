@@ -4,6 +4,8 @@ namespace Session\Domain\Question;
 
 use PHPUnit\Framework\TestCase;
 use QVGDS\Session\Domain\Question\Answer;
+use QVGDS\Session\Domain\Question\BadAnswers;
+use QVGDS\Session\Domain\Question\GoodAnswerIsAlsoInBadAnswersException;
 use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Tests\Session\SessionFixtures;
 use QVGDS\Utils\MissingMandatoryValueException;
@@ -22,8 +24,18 @@ class QuestionTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
+    public function shouldHaveGoodAnswerDifferentOfBadAnswers(): void
+    {
+        $this->expectException(GoodAnswerIsAlsoInBadAnswersException::class);
+
+        new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), new BadAnswers(new Answer("Good answer"), new Answer("bad"), new Answer("bad")));
+    }
+
+    /**
+     * @test
+     */
     public function shouldAskForFiftyFifty(): void
     {
         $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
@@ -36,8 +48,8 @@ class QuestionTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldVerifyGoodAnswer(): void
     {
         $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
@@ -46,8 +58,8 @@ class QuestionTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldVerifyBadAnswer(): void
     {
         $question = new Question(SessionFixtures::questionId(), 1, "toto", SessionFixtures::goodAnswer(), SessionFixtures::badAnswers());
