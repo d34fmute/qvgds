@@ -19,25 +19,56 @@ final readonly class RestGame
      */
     private function __construct(
         #[OA\Property]
-        public string     $id,
+        private string     $id,
 
         #[OA\Property]
-        public string     $player,
+        private string     $player,
 
         #[OA\Property]
-        public int        $step,
+        private int        $step,
 
         #[OA\Property]
-        public int        $shitcoins,
+        private int        $shitcoins,
 
         #[OA\Property]
-        public GameStatus $status,
+        private GameStatus $status,
 
         #[OA\Property(items: new OA\Items(type: RestJoker::class))]
-        public array      $jokers
+        private array      $jokers
     )
     {
     }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getPlayer(): string
+    {
+        return $this->player;
+    }
+
+    public function getStep(): int
+    {
+        return $this->step;
+    }
+
+    public function getShitcoins(): int
+    {
+        return $this->shitcoins;
+    }
+
+    public function getStatus(): string
+    {
+        return $this->status->name;
+    }
+
+    public function getJokers(): array
+    {
+        return $this->jokers;
+    }
+
 
     public static function from(Game $game): self
     {

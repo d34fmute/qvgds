@@ -6,9 +6,9 @@ namespace QVGDS\Game\Domain;
 use OpenApi\Attributes\Schema;
 
 #[Schema(title: "Game status")]
-enum GameStatus: string
+enum GameStatus
 {
-    case LOST = "LOST";
-    case FORGIVEN = "FORGIVEN";
-    case IN_PROGRESS = "IN_PROGRESS";
+    case LOST;
+    case FORGIVEN;
+    case IN_PROGRESS;
 }

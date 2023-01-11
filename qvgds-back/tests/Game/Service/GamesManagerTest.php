@@ -38,7 +38,7 @@ final class GamesManagerTest extends TestCase
     public function shouldNotStartAGameWithUnknownSession(): void
     {
         $this->expectException(SessionNotFoundException::class);
-        $this->service->start(GameId::newId(), SessionFixtures::sessionId(), "Toto");
+        $this->service->start(GameFixtures::gameStart());
     }
 
     /**
@@ -128,6 +128,6 @@ final class GamesManagerTest extends TestCase
     private function prepareGame(): void
     {
         $this->sessions->save(SessionFixtures::sessionWithQuestions());
-        $this->service->start(GameFixtures::gameId(), SessionFixtures::sessionId(), "Toto");
+        $this->service->start(GameFixtures::gameStart());
     }
 }
