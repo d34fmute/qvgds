@@ -23,7 +23,7 @@ class RestGameTest extends TestCase
         return
             '{"id":"7cb03186-5430-45c2-9bdb-d5993a4ad209",'
             . '"player":"Toto",'
-            . '"step":1,'
+            . '"level":0,'
             . '"shitcoins":0,'
             . '"status":"IN_PROGRESS",'
             . '"jokers":['

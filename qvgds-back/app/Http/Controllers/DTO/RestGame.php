@@ -25,7 +25,7 @@ final readonly class RestGame
         private string     $player,
 
         #[OA\Property]
-        private int        $step,
+        private int        $level,
 
         #[OA\Property]
         private int        $shitcoins,
@@ -49,9 +49,9 @@ final readonly class RestGame
         return $this->player;
     }
 
-    public function getStep(): int
+    public function getLevel(): int
     {
-        return $this->step;
+        return $this->level;
     }
 
     public function getShitcoins(): int
@@ -75,7 +75,7 @@ final readonly class RestGame
         return new self(
             $game->id()->get(),
             $game->player(),
-            $game->step(),
+            $game->step()->value,
             $game->shitCoins()->amount(),
             $game->status(),
             RestJoker::fromGame($game)

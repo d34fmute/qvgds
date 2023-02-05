@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace QVGDS\Tests\Session;
 
+use QVGDS\Game\Domain\Level;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\BadAnswers;
 use QVGDS\Session\Domain\Question\GoodAnswer;
@@ -42,7 +43,7 @@ final class SessionFixtures
 
     public static function question(): Question
     {
-        return new Question(self::questionId(),1, self::questionText(), self::goodAnswer(), self::badAnswers());
+        return new Question(self::questionId(), Level::ZERO, self::questionText(), self::goodAnswer(), self::badAnswers());
     }
 
     public static function sessionWithoutQuestions(): Session

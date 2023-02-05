@@ -3,20 +3,20 @@ declare(strict_types=1);
 
 namespace QVGDS\Session\Domain\Question;
 
+use QVGDS\Game\Domain\Level;
 use QVGDS\Utils\Assert;
 
 final readonly class Question
 {
     public function __construct(
         private QuestionId $id,
-        private int        $step,
+        private Level      $level,
         private string     $text,
         private GoodAnswer $goodAnswer,
         private BadAnswers $badAnswers,
     )
     {
         Assert::notEmptyText("text", $text);
-        Assert::numberValue("step", $step)->isEqualOrGreaterThan(1);
         $this->assertGoodAnswerIsNotInBadAnswers($goodAnswer, $badAnswers);
     }
 
@@ -56,9 +56,9 @@ final readonly class Question
         return $this->badAnswers->get();
     }
 
-    public function step(): int
+    public function level(): Level
     {
-        return $this->step;
+        return $this->level;
     }
 
     private function assertGoodAnswerIsNotInBadAnswers(GoodAnswer $goodAnswer, BadAnswers $badAnswers): void

@@ -108,7 +108,7 @@ final readonly class GamesController
         $currentQuestion = $game->currentQuestion();
 
         $json = [
-            "reward" => ShitCoins::fromLevel($game->step(), $game->status())->amount(),
+            "reward" => ShitCoins::from($game->step()->value)->amount(),
             "step" => $game->step(),
             "question" => $currentQuestion->text(),
             "answers" => $this->serializeAnswers($currentQuestion),

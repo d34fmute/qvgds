@@ -7,25 +7,14 @@ use QVGDS\Game\Domain\GameBlockedException;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\Jokers;
+use QVGDS\Game\Domain\Level;
 use QVGDS\Game\Domain\ShitCoins;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Tests\Game\GameFixtures;
 use QVGDS\Tests\Session\SessionFixtures;
-use QVGDS\Utils\InvalidNumberArgumentException;
 
 final class GameTest extends TestCase
 {
-    /**
-     * @test
-     */
-    public function shouldNotBuildWithANegativeStep(): void
-    {
-        $this->expectException(InvalidNumberArgumentException::class);
-        $this->expectExceptionMessage("step must be equal or greater than 0");
-
-        new Game(GameId::newId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::IN_PROGRESS, -1);
-    }
-
     /**
      * @test
      */
@@ -35,7 +24,7 @@ final class GameTest extends TestCase
 
         $game->guess(new Answer("Good answer"));
 
-        $this->assertEquals(ShitCoins::of(100), $game->shitCoins());
+        $this->assertEquals(ShitCoins::ONE_HUNDRED, $game->shitCoins());
     }
 
     /**
@@ -67,7 +56,7 @@ final class GameTest extends TestCase
      */
     public function shouldFailWhenGuessingOnLostGame(): void
     {
-        $lostGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, 4);
+        $lostGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, Level::FOUR);
         $this->expectException(GameBlockedException::class);
         $this->expectExceptionMessage("Game LOST");
         $lostGame->guess(new Answer("don’t care"));
@@ -78,7 +67,7 @@ final class GameTest extends TestCase
      */
     public function shouldFailWhenGuessingOnForgivenGame(): void
     {
-        $forgivenGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN, 4);
+        $forgivenGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN, Level::FOUR);
         $this->expectException(GameBlockedException::class);
         $this->expectExceptionMessage("Game FORGIVEN");
         $forgivenGame->guess(new Answer("don’t care"));
@@ -91,6 +80,40 @@ final class GameTest extends TestCase
     {
         $game = GameFixtures::newGame();
 
-        self::assertEquals(ShitCoins::of(0), $game->shitCoins());
+        self::assertEquals(ShitCoins::ZERO, $game->shitCoins());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHaveShitcoinsForFirstThreshold(): void
+    {
+        $game = new Game(
+            GameId::newId(),
+            GameFixtures::player(),
+            new Jokers(),
+            SessionFixtures::sessionWithQuestions(),
+            GameStatus::LOST,
+            Level::EIGHT
+        );
+
+        self::assertEquals($game->shitCoins(), ShitCoins::ONE_THOUSAND);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHaveShitcoinsForSecondThreshold(): void
+    {
+        $game = new Game(
+            GameId::newId(),
+            GameFixtures::player(),
+            new Jokers(),
+            SessionFixtures::sessionWithQuestions(),
+            GameStatus::LOST,
+            Level::TWELVE
+        );
+
+        self::assertEquals($game->shitCoins(), ShitCoins::TWENTY_FOUR_THOUSAND);
     }
 }

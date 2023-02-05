@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Session\Domain;
 
 use PHPUnit\Framework\TestCase;
+use QVGDS\Game\Domain\Level;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Tests\Session\SessionFixtures;
@@ -13,8 +14,8 @@ use QVGDS\Utils\MissingMandatoryValueException;
 class SessionTest extends TestCase
 {
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldNotBuildWithEmptyPlayers(): void
     {
         $this->expectException(MissingMandatoryValueException::class);
@@ -24,8 +25,8 @@ class SessionTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldAddAQuestionWithAnIncrementalId(): void
     {
         $session = SessionFixtures::sessionWithoutQuestions();
@@ -37,8 +38,8 @@ class SessionTest extends TestCase
     }
 
     /**
-    * @test
-    */
+     * @test
+     */
     public function shouldHaveAnErrorWhenQuestionIsNotFound(): void
     {
         $session = SessionFixtures::sessionWithQuestions();
@@ -46,6 +47,6 @@ class SessionTest extends TestCase
         $this->expectException(QuestionNotFoundException::class);
         $this->expectExceptionMessage("Question 3 not found in this session");
 
-        $session->fiftyFifty(3);
+        $session->fiftyFifty(Level::THREE);
     }
 }

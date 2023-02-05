@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\GameId;
-use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\AudienceHelp;
 use QVGDS\Game\Domain\Joker\CallAFriend;
 use QVGDS\Game\Domain\Joker\FiftyFifty;
@@ -93,7 +92,7 @@ final class GamesManagerTest extends TestCase
 
         $game = $this->service->get(GameFixtures::gameId());
 
-        self::assertEquals(ShitCoins::fromLevel(1, GameStatus::IN_PROGRESS), $game->shitCoins());
+        self::assertEquals(ShitCoins::ONE_HUNDRED, $game->shitCoins());
     }
 
     /**

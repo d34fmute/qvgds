@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 use App\Models\LaravelQuestion;
 use App\Models\LaravelSession;
+use QVGDS\Game\Domain\Level;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\BadAnswers;
 use QVGDS\Session\Domain\Question\GoodAnswer;
@@ -58,7 +59,7 @@ final class LaravelSessionsRepository implements SessionsRepository
         $questions = $laravelSession->questions()->get()->map(
             fn(LaravelQuestion $q): Question => new Question(
                 new QuestionId(Uuid::fromString($q->id)),
-                $q->step,
+                Level::from($q->step,),
                 $q->question,
                 new GoodAnswer(new Answer($q->good_answer)),
                 new BadAnswers(
@@ -82,7 +83,7 @@ final class LaravelSessionsRepository implements SessionsRepository
             [
                 "id" => $question->id()->get(),
                 "session" => $sessionId->get(),
-                "step" => $question->step(),
+                "step" => $question->level(),
                 "question" => $question->text(),
                 "good_answer" => $question->goodAnswer()->text,
                 "bad_answer1" => $question->badAnswers()[0]->text,
