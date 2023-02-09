@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\Game;
 use QVGDS\Game\Domain\GameBlockedException;
@@ -15,9 +16,7 @@ use QVGDS\Tests\Session\SessionFixtures;
 
 final class GameTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldIncrementScoreWithAGoodAnswer(): void
     {
         $game = GameFixtures::newGame();
@@ -27,9 +26,7 @@ final class GameTest extends TestCase
         $this->assertEquals(ShitCoins::ONE_HUNDRED, $game->shitCoins());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldForgiveAGame(): void
     {
         $game = GameFixtures::newGame();
@@ -39,9 +36,7 @@ final class GameTest extends TestCase
         self::assertEquals(GameStatus::FORGIVEN, $game->status());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldLooseWithABadAnswer(): void
     {
         $game = GameFixtures::newGame();
@@ -51,9 +46,7 @@ final class GameTest extends TestCase
         self::assertEquals(GameStatus::LOST, $fail->game->status());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenGuessingOnLostGame(): void
     {
         $lostGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::LOST, Level::FOUR);
@@ -62,9 +55,7 @@ final class GameTest extends TestCase
         $lostGame->guess(new Answer("don’t care"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailWhenGuessingOnForgivenGame(): void
     {
         $forgivenGame = new Game(GameFixtures::gameId(), "Toto", new Jokers(), SessionFixtures::sessionWithQuestions(), GameStatus::FORGIVEN, Level::FOUR);
@@ -73,9 +64,7 @@ final class GameTest extends TestCase
         $forgivenGame->guess(new Answer("don’t care"));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function gameStartedShouldHaveZeroShitcoin(): void
     {
         $game = GameFixtures::newGame();
@@ -83,9 +72,7 @@ final class GameTest extends TestCase
         self::assertEquals(ShitCoins::ZERO, $game->shitCoins());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldHaveShitcoinsForFirstThreshold(): void
     {
         $game = new Game(
@@ -100,9 +87,7 @@ final class GameTest extends TestCase
         self::assertEquals($game->shitCoins(), ShitCoins::ONE_THOUSAND);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldHaveShitcoinsForSecondThreshold(): void
     {
         $game = new Game(

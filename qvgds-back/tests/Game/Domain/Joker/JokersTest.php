@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Game\Domain\Joker;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\Joker\CallAFriend;
 use QVGDS\Game\Domain\Joker\FiftyFifty;
@@ -13,9 +14,7 @@ use QVGDS\Game\Domain\Joker\JokerType;
 
 final class JokersTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNotUsedNotAvailableJoker(): void
     {
         $jokers = new Jokers(new CallAFriend(JokerStatus::ALREADY_USED));
@@ -25,9 +24,7 @@ final class JokersTest extends TestCase
         $jokers->use(JokerType::CALL_A_FRIEND);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUseAJoker(): void
     {
         $jokers = new Jokers(new CallAFriend(JokerStatus::AVAILABLE));
@@ -36,9 +33,7 @@ final class JokersTest extends TestCase
         self::assertContainsEquals(new CallAFriend(JokerStatus::ALREADY_USED), $jokers->all());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldCannotUseAbsentJoker(): void
     {
         $this->expectException(JokerNotAvailableException::class);
