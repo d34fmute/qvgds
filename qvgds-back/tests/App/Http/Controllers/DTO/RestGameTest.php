@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers\DTO;
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Tests\Game\GameFixtures;
 use QVGDS\Tests\Json\JsonHelper;
 
 class RestGameTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldSerializeToJson(): void
     {
         $json = JsonHelper::writeAsJson(RestGame::from(GameFixtures::newGame()));
@@ -23,7 +22,7 @@ class RestGameTest extends TestCase
         return
             '{"id":"7cb03186-5430-45c2-9bdb-d5993a4ad209",'
             . '"player":"Toto",'
-            . '"step":1,'
+            . '"level":0,'
             . '"shitcoins":0,'
             . '"status":"IN_PROGRESS",'
             . '"jokers":['

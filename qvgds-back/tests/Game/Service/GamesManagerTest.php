@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\GameId;
-use QVGDS\Game\Domain\GameStatus;
 use QVGDS\Game\Domain\Joker\AudienceHelp;
 use QVGDS\Game\Domain\Joker\CallAFriend;
 use QVGDS\Game\Domain\Joker\FiftyFifty;
@@ -32,18 +32,14 @@ final class GamesManagerTest extends TestCase
         $this->service = new GamesManager(new TestInMemoryGamesRepository(), $this->sessions);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNotStartAGameWithUnknownSession(): void
     {
         $this->expectException(SessionNotFoundException::class);
         $this->service->start(GameFixtures::gameStart());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldGetTheStartedGame(): void
     {
         $this->prepareGame();
@@ -51,9 +47,7 @@ final class GamesManagerTest extends TestCase
         self::assertEquals(GameFixtures::newGame(), $this->service->get(GameFixtures::gameId()));
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shoulListGames(): void
     {
         $this->prepareGame();
@@ -61,18 +55,14 @@ final class GamesManagerTest extends TestCase
         self::assertEquals([GameFixtures::newGame()], $this->service->list());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldFailOnNotFoundGame(): void
     {
         $this->expectException(UnknownGameException::class);
         $this->service->get(GameId::newId());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldGetCurrentQuestion(): void
     {
         $this->prepareGame();
@@ -82,9 +72,7 @@ final class GamesManagerTest extends TestCase
         self::assertEquals(SessionFixtures::question(), $question);
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldAnswerFirstQuestion(): void
     {
         $this->prepareGame();
@@ -93,12 +81,10 @@ final class GamesManagerTest extends TestCase
 
         $game = $this->service->get(GameFixtures::gameId());
 
-        self::assertEquals(ShitCoins::fromLevel(1, GameStatus::IN_PROGRESS), $game->shitCoins());
+        self::assertEquals(ShitCoins::ONE_HUNDRED, $game->shitCoins());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldUseOneJoker(): void
     {
         $this->prepareGame();
@@ -109,9 +95,7 @@ final class GamesManagerTest extends TestCase
         self::assertEquals(new Jokers(new FiftyFifty(JokerStatus::ALREADY_USED), new CallAFriend(JokerStatus::AVAILABLE), new AudienceHelp(JokerStatus::AVAILABLE)), $game->jokers());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldForgiveAGame(): void
     {
         $this->prepareGame();

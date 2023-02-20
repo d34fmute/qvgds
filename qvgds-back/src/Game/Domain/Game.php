@@ -18,11 +18,10 @@ final class Game
         private readonly Jokers  $jokers,
         private readonly Session $session,
         private GameStatus       $status,
-        private int              $step = 1
+        private Level            $level = Level::ZERO
     )
     {
         Assert::notEmptyText("step", $player);
-        Assert::numberValue("step", $step)->isEqualOrGreaterThan(0);
     }
 
     public static function start(GameId $id, string $player, Session $session): self
@@ -38,20 +37,27 @@ final class Game
     public function guess(Answer $answer): self|Fail
     {
         $this->assertGameStatus();
-        $isGuessed = $this->session->guess($this->step, $answer);
+        $isGuessed = $this->session->guess($this->level, $answer);
         if ($isGuessed) {
-            $this->step += 1;
-        } else {
-            $this->status = GameStatus::LOST;
-            return new Fail($this);
+            $this->level = $this->level->next();
+            return $this;
         }
+        $this->status = GameStatus::LOST;
 
-        return $this;
+        return new Fail($this);
     }
 
     public function shitCoins(): ShitCoins
     {
-        return ShitCoins::fromLevel($this->step - 1, $this->status);
+        if ($this->status == GameStatus::LOST) {
+            if ($this->isOverSecondThreshold()) {
+                return ShitCoins::TWENTY_FOUR_THOUSAND;
+            }
+            if ($this->isOverFirstThreshold()) {
+                return ShitCoins::ONE_THOUSAND;
+            }
+        }
+        return ShitCoins::from($this->level->value);
     }
 
     /**
@@ -61,7 +67,7 @@ final class Game
     {
         $this->jokers->use(JokerType::FIFTY_FIFTY);
 
-        return $this->session->fiftyFifty($this->step);
+        return $this->session->fiftyFifty($this->level);
     }
 
     public function id(): GameId
@@ -71,7 +77,7 @@ final class Game
 
     public function currentQuestion(): Question
     {
-        return $this->session->question($this->step);
+        return $this->session->question($this->level);
     }
 
     public function status(): GameStatus
@@ -101,8 +107,18 @@ final class Game
         return $this->session;
     }
 
-    public function step(): int
+    public function step(): Level
     {
-        return $this->step;
+        return $this->level;
+    }
+
+    private function isOverSecondThreshold(): bool
+    {
+        return $this->level->value >= 10;
+    }
+
+    private function isOverFirstThreshold(): bool
+    {
+        return $this->level->value >= 5;
     }
 }

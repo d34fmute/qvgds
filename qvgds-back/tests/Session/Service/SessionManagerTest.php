@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Session\Domain\Session;
 use QVGDS\Session\Domain\SessionId;
@@ -11,9 +12,7 @@ use QVGDS\Tests\Session\SessionFixtures;
 
 final class SessionManagerTest extends TestCase
 {
-    /**
-    * @test
-    */
+    #[Test]
     public function shouldCreateANewSession(): void
     {
         $service = new SessionsManager(new TestInMemorySessionsRepository());
@@ -25,9 +24,7 @@ final class SessionManagerTest extends TestCase
         $this->assertEquals($session, $service->get($sessionId));
     }
 
-    /**
-    * @test
-    */
+    #[Test]
     public function shouldFailToRetrieveUnknownSession(): void
     {
         $service = new SessionsManager(new TestInMemorySessionsRepository());
@@ -37,9 +34,7 @@ final class SessionManagerTest extends TestCase
         $service->get(SessionFixtures::sessionId());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldNotAddQuestionOnUnknowSession(): void
     {
         $service = new SessionsManager(new TestInMemorySessionsRepository());
@@ -49,9 +44,7 @@ final class SessionManagerTest extends TestCase
         $service->addQuestion(SessionFixtures::sessionId(), SessionFixtures::questionToAdd());
     }
 
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldAddAQuestion(): void
     {
         $sessions = new TestInMemorySessionsRepository();
@@ -66,9 +59,7 @@ final class SessionManagerTest extends TestCase
         self::assertEquals([SessionFixtures::question()], $session->questions());
     }
 
-    /**
-    * @test
-    */
+    #[Test]
     public function shouldListSessions(): void
     {
         $sessions = new TestInMemorySessionsRepository();

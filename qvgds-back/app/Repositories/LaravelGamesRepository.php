@@ -17,6 +17,7 @@ use QVGDS\Game\Domain\Joker\Joker;
 use QVGDS\Game\Domain\Joker\Jokers;
 use QVGDS\Game\Domain\Joker\JokerStatus;
 use QVGDS\Game\Domain\Joker\JokerType;
+use QVGDS\Game\Domain\Level;
 use QVGDS\Session\Domain\Session;
 use Ramsey\Uuid\Uuid;
 
@@ -83,7 +84,7 @@ final class LaravelGamesRepository implements GamesRepository
             new Jokers(...$laravelGame->jokers()->get()->map(fn(LaravelJoker $joker) => $this->buildJoker($joker))->toArray()),
             $laravelGame->session()->get()->map(fn(LaravelSession $session): Session => LaravelSessionsRepository::toDomain($session))->first(),
             $this->buildGameStatus($laravelGame->status),
-            $laravelGame->step
+            Level::from($laravelGame->step)
         );
     }
 

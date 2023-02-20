@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DTO\RestStartGame;
+use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use QVGDS\Game\Domain\GameId;
 use QVGDS\Session\Domain\SessionId;
@@ -8,9 +9,7 @@ use QVGDS\Tests\Json\JsonHelper;
 
 class RestStartGameTest extends TestCase
 {
-    /**
-     * @test
-     */
+    #[Test]
     public function shouldDeserializeFromJson(): void
     {
         /** @var RestStartGame $restStartGame */

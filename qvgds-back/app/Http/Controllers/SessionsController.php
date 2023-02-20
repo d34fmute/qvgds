@@ -92,7 +92,7 @@ final class SessionsController
         return [
             "id" => $question->id()->get(),
             "text" => $question->text(),
-            "step" => $question->step(),
+            "step" => $question->level(),
             "goodAnswer" => $question->goodAnswer()->text,
             "badAnswers" => array_map(fn(Answer $answer): string => $answer->text, $question->badAnswers())
         ];

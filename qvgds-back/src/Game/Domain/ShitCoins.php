@@ -1,94 +1,45 @@
 <?php
-declare(strict_types=1);
 
 namespace QVGDS\Game\Domain;
 
-final class ShitCoins
+enum ShitCoins: int
 {
-
-    private const SECOND_THRESHOLD = 10;
-    private const FIRST_THRESHOLD = 5;
-
-    private function __construct(private readonly int $amount)
-    {
-    }
-
-    /**
-     * @throws InvalidShitCoinsException
-     */
-    public static function of(int $amount): self
-    {
-        self::assertAmount($amount);
-
-        return new self($amount);
-    }
-
-    private static function assertAmount(int $amount): void
-    {
-        if (!in_array($amount, self::pyramid())) {
-            throw InvalidShitCoinsException::invalidAmount($amount);
-        }
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    private static function pyramid(): array
-    {
-        return [
-            0 => 0,
-            1 => 100,
-            2 => 200,
-            3 => 300,
-            4 => 500,
-            self::FIRST_THRESHOLD => 1000,
-            6 => 2000,
-            7 => 4000,
-            8 => 8000,
-            9 => 12000,
-            self::SECOND_THRESHOLD => 24000,
-            11 => 36000,
-            12 => 72000,
-            13 => 150000,
-            14 => 300000,
-            15 => 1000000,
-        ];
-    }
-
-
-    public static function fromLevel(int $level, GameStatus $status): self
-    {
-        self::assertLevel($level);
-        if ($status === GameStatus::LOST) {
-            return self::shitCoinsWithThreshold($level);
-        }
-
-        return self::converter($level);
-    }
-
-    private static function assertLevel(int $level): void
-    {
-        if (!array_key_exists($level, self::pyramid())) {
-            throw InvalidShitCoinsException::invalidLevel($level);
-        }
-    }
-
-    private static function converter(int $level): self
-    {
-        return new self(self::pyramid()[$level]);
-    }
-
-    private static function shitCoinsWithThreshold(int $level): ShitCoins
-    {
-        return match (true) {
-            $level >= self::SECOND_THRESHOLD => self::converter(self::SECOND_THRESHOLD),
-            $level >= self::FIRST_THRESHOLD => self::converter(self::FIRST_THRESHOLD),
-            default => self::converter($level)
-        };
-    }
+    case ZERO = 0;
+    case ONE_HUNDRED = 1;
+    case TWO_HUNDRED = 2;
+    case THREE_HUNDRED = 3;
+    case FIVE_HUNDRED = 4;
+    case ONE_THOUSAND = 5;
+    case TWO_THOUSAND = 6;
+    case FOUR_THOUSAND = 7;
+    case EIGHT_THOUSAND = 8;
+    case TWELVE_THOUSAND = 9;
+    case TWENTY_FOUR_THOUSAND = 10;
+    case THIRTY_SIX_THOUSAND = 11;
+    case SEVENTY_TWO_THOUSAND = 12;
+    case ONE_HUNDRED_FIFTY_THOUSAND = 13;
+    case THREE_HUNDRED_THOUSAND = 14;
+    case ONE_MILLION = 15;
 
     public function amount(): int
     {
-        return $this->amount;
+        return match ($this) {
+            ShitCoins::ZERO => 0,
+            ShitCoins::ONE_HUNDRED => 100,
+            ShitCoins::TWO_HUNDRED => 200,
+            ShitCoins::THREE_HUNDRED => 300,
+            ShitCoins::FIVE_HUNDRED => 500,
+            ShitCoins::ONE_THOUSAND => 1000,
+            ShitCoins::TWO_THOUSAND => 2000,
+            ShitCoins::FOUR_THOUSAND => 4000,
+            ShitCoins::EIGHT_THOUSAND => 8000,
+            ShitCoins::TWELVE_THOUSAND => 12000,
+            ShitCoins::TWENTY_FOUR_THOUSAND => 24000,
+            ShitCoins::THIRTY_SIX_THOUSAND => 36000,
+            ShitCoins::SEVENTY_TWO_THOUSAND => 72000,
+            ShitCoins::ONE_HUNDRED_FIFTY_THOUSAND => 150000,
+            ShitCoins::THREE_HUNDRED_THOUSAND => 300000,
+            ShitCoins::ONE_MILLION => 1000000,
+        };
     }
 }

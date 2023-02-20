@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace QVGDS\Session\Domain;
 
+use QVGDS\Game\Domain\Level;
 use QVGDS\Session\Domain\Question\Answer;
 use QVGDS\Session\Domain\Question\Question;
 use QVGDS\Session\Domain\Question\QuestionNotFoundException;
@@ -45,36 +46,36 @@ final class Session
         return $this->questions;
     }
 
-    public function guess(int $id, Answer $answer): bool
+    public function guess(Level $level, Answer $answer): bool
     {
-        return $this->findQuestion($id)->guess($answer);
+        return $this->findQuestion($level)->guess($answer);
     }
 
     /**
      * @return Answer[]
      */
-    public function fiftyFifty(int $id): array
+    public function fiftyFifty(Level $level): array
     {
-        return $this->findQuestion($id)->fiftyFifty();
+        return $this->findQuestion($level)->fiftyFifty();
     }
 
-    private function findQuestion(int $id): Question
+    private function findQuestion(Level $level): Question
     {
-        $questions = array_filter($this->questions, fn(Question $q): bool => $q->step() == $id);
+        $questions = array_filter($this->questions, fn(Question $q): bool => $q->level() == $level);
         if (empty($questions)) {
-            throw new QuestionNotFoundException((string)$id);
+            throw new QuestionNotFoundException((string)$level->value);
         }
 
         return array_pop($questions);
     }
 
-    private function calculateStep(): int
+    private function calculateStep(): Level
     {
-        return count($this->questions) + 1;
+        return Level::from(count($this->questions));
     }
 
-    public function question(int $id): Question
+    public function question(Level $level): Question
     {
-        return $this->findQuestion($id);
+        return $this->findQuestion($level);
     }
 }
