@@ -83,7 +83,7 @@ const {
 });
 
 const sceneTwoCams = ref(true);
-const level = ref(0);
+const level = ref(14);
 const gameOver = ref(false);
 const currentChoice = ref<Choice | undefined>();
 const choiceValidated = ref<boolean>(false);
@@ -402,7 +402,7 @@ const handleLeaveGameWithMoney = () => {
     <ChatJoker
       v-if="isChatJokerEnable"
       @close="handleCloseChatJoker"
-      :question="currentQuestion?.fields.title"
+      :currentQuestion="currentQuestion"
     />
   </main>
 </template>
